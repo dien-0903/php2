@@ -41,13 +41,15 @@ class AuthController extends Controller {
                             'role'     => $userRole
                         ];
                         
+                        $_SESSION['success'] = "Đăng nhập thành công! Chào mừng " . $user['fullname'];
+                        
                         session_write_close();
                         
                         $target = ($userRole === 'admin') ? 'adminproduct/index' : 'product/index';
                         
                         echo json_encode([
                             'success' => true, 
-                            'message' => 'Đăng nhập thành công!',
+                            'message' => 'Đang chuyển hướng...', 
                             'redirect' => BASE_URL . '/' . $target
                         ]);
                         return;
@@ -81,39 +83,37 @@ class AuthController extends Controller {
             $confirm_password = $_POST['confirm_password'] ?? '';
 
             if (empty($fullname) || empty($email) || empty($password)) {
-                echo json_encode(['success' => false, 'message' => 'Vui lòng điền đầy đủ các thông tin bắt buộc!']);
+                echo json_encode(['success' => false, 'message' => 'Vui lòng điền đầy đủ thông tin!']);
                 return;
             }
 
             if ($password !== $confirm_password) {
-                echo json_encode(['success' => false, 'message' => 'Mật khẩu xác nhận không trùng khớp!']);
+                echo json_encode(['success' => false, 'message' => 'Mật khẩu xác nhận không khớp!']);
                 return;
             }
 
             try {
                 $userModel = $this->model('User');
                 if ($userModel->exists($email)) {
-                    echo json_encode(['success' => false, 'message' => 'Email này đã được sử dụng cho một tài khoản khác!']);
+                    echo json_encode(['success' => false, 'message' => 'Email này đã được sử dụng!']);
                     return;
                 }
 
-                $result = $userModel->create([
+                $userModel->create([
                     'fullname' => $fullname,
                     'email'    => $email,
                     'password' => $password,
                     'role'     => 'user'
                 ]);
 
-                if ($result) {
-                    session_write_close();
-                    echo json_encode([
-                        'success' => true, 
-                        'message' => 'Đăng ký thành công! Hãy đăng nhập ngay.',
-                        'redirect' => BASE_URL . '/auth/login'
-                    ]);
-                } else {
-                    echo json_encode(['success' => false, 'message' => 'Có lỗi xảy ra trong quá trình đăng ký!']);
-                }
+                $_SESSION['success'] = "Đăng ký thành công! Hãy đăng nhập ngay.";
+                session_write_close();
+
+                echo json_encode([
+                    'success' => true, 
+                    'message' => 'Đăng ký thành công!',
+                    'redirect' => BASE_URL . '/auth/login'
+                ]);
             } catch (Exception $e) {
                 echo json_encode(['success' => false, 'message' => 'Lỗi: ' . $e->getMessage()]);
             }
@@ -133,30 +133,25 @@ class AuthController extends Controller {
             $password = $_POST['password'] ?? '';
             $confirm_password = $_POST['confirm_password'] ?? '';
 
-            if (empty($email) || empty($password) || empty($confirm_password)) {
-                echo json_encode(['success' => false, 'message' => 'Vui lòng nhập đầy đủ các trường thông tin!']);
+            if (empty($email) || empty($password)) {
+                echo json_encode(['success' => false, 'message' => 'Vui lòng nhập đầy đủ thông tin!']);
                 return;
             }
 
             $userModel = $this->model('User');
-
             if (!$userModel->exists($email)) {
-                echo json_encode(['success' => false, 'message' => 'Email này không tồn tại trên hệ thống!']);
-                return;
-            }
-
-            if ($password !== $confirm_password) {
-                echo json_encode(['success' => false, 'message' => 'Xác nhận mật khẩu mới không khớp!']);
+                echo json_encode(['success' => false, 'message' => 'Email không tồn tại!']);
                 return;
             }
 
             try {
                 $userModel->updatePassword($email, $password);
+                $_SESSION['success'] = "Đổi mật khẩu thành công! Vui lòng đăng nhập lại.";
                 session_write_close();
 
                 echo json_encode([
                     'success' => true, 
-                    'message' => 'Đổi mật khẩu thành công! Hãy đăng nhập lại bằng mật khẩu mới.',
+                    'message' => 'Thành công!',
                     'redirect' => BASE_URL . '/auth/login'
                 ]);
             } catch (Exception $e) {
@@ -167,10 +162,8 @@ class AuthController extends Controller {
 
     public function logout() {
         if (session_status() === PHP_SESSION_NONE) session_start();
-        
         $_SESSION = [];
         session_destroy();
-        
         $this->redirect('product/index');
     }
 }

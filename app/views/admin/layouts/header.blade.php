@@ -75,7 +75,7 @@
     <nav class="navbar navbar-expand-lg navbar-dark navbar-admin sticky-top shadow-sm">
         <div class="container">
             <a class="navbar-brand fw-bold fs-4 d-flex align-items-center" href="{{ BASE_URL }}/adminproduct/index">
-                <i class="bi bi-shield-lock-fill me-2"></i>ADMIN CP
+                <i class="bi bi-shield-lock-fill me-2"></i>ADMIN MD
             </a>
 
             <button class="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#adminMenu">
@@ -98,6 +98,12 @@
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{{ BASE_URL }}/admincoupon/index">Coupon</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ BASE_URL }}/admincolor/index">Màu sắc</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ BASE_URL }}/adminsize/index">Size</a>
                     </li>
                 </ul>
 

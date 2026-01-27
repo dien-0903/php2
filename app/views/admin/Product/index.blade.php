@@ -1,6 +1,7 @@
 @include('admin.layouts.header')
 
 <div class="container mt-4 text-dark">
+    {{-- Hiển thị thông báo thành công --}}
     @if(isset($_SESSION['success']))
         <div class="alert alert-success border-0 shadow-sm mb-4 animate-slide-down rounded-4 d-flex align-items-center">
             <i class="bi bi-check-circle-fill me-2 fs-5"></i>
@@ -18,6 +19,7 @@
         </button>
     </div>
 
+    {{-- Thanh tìm kiếm --}}
     <div class="card p-3 mb-4 shadow-sm border-0 rounded-4 bg-white border border-slate-100">
         <form action="{{ rtrim(BASE_URL, '/') }}/adminproduct/index" method="GET" class="row g-2">
             <div class="col-md-5">
@@ -40,13 +42,14 @@
         </form>
     </div>
 
+    {{-- Bảng danh sách sản phẩm --}}
     <div class="card shadow-sm border-0 rounded-4 overflow-hidden bg-white border border-slate-50">
         <div class="table-responsive">
             <table class="table table-hover align-middle mb-0">
                 <thead class="table-dark border-0">
                     <tr>
                         <th class="ps-4 py-3" width="100">Ảnh</th>
-                        <th>Tên sản phẩm</th>
+                        <th>Thông tin sản phẩm</th>
                         <th>Giá bán</th>
                         <th>Danh mục</th>
                         <th class="text-end pe-4">Thao tác</th>
@@ -77,6 +80,14 @@
                         </td>
                         <td class="text-end pe-4">
                             <div class="btn-group shadow-sm rounded-3 overflow-hidden">
+                                {{-- NÚT CẤU HÌNH BIẾN THỂ (MÀU/SIZE) --}}
+                                <a href="{{ rtrim(BASE_URL, '/') }}/adminvariant/index/{{ $p['id'] }}" 
+                                   class="btn btn-sm btn-white border border-end-0 text-primary" 
+                                   title="Cấu hình Màu sắc & Kích thước">
+                                    <i class="bi bi-gear-wide-connected"></i>
+                                </a>
+
+                                {{-- NÚT CHỈNH SỬA --}}
                                 <button class="btn btn-sm btn-white border btn-edit-product"
                                     data-bs-toggle="modal" data-bs-target="#editProductModal"
                                     data-id="{{ $p['id'] }}"
@@ -87,9 +98,12 @@
                                     data-image="{{ $p['image'] }}">
                                     <i class="bi bi-pencil-square text-warning"></i>
                                 </button>
+
+                                {{-- NÚT XÓA --}}
                                 <a href="{{ rtrim(BASE_URL, '/') }}/adminproduct/destroy/{{ $p['id'] }}" 
-                                   class="btn btn-sm btn-white border" onclick="return confirm('Xác nhận xóa sản phẩm {{ $p['name'] }}?')">
-                                    <i class="bi bi-trash text-danger"></i>
+                                   class="btn btn-sm btn-white border text-danger" 
+                                   onclick="return confirm('Xác nhận xóa sản phẩm {{ $p['name'] }}?')">
+                                    <i class="bi bi-trash"></i>
                                 </a>
                             </div>
                         </td>
@@ -104,6 +118,7 @@
         </div>
     </div>
 
+    {{-- Phân trang --}}
     @if (isset($totalPages) && $totalPages > 1)
     <nav class="mt-4 mb-5">
         <ul class="pagination justify-content-center gap-2">
@@ -168,6 +183,7 @@
     .shadow-primary { box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25); }
     .animate-slide-down { animation: slideDown 0.4s ease-out; }
     @keyframes slideDown { from { transform: translateY(-10px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    .btn-white:hover { background-color: #f8fafc; }
 </style>
 
 @include('admin.layouts.footer')

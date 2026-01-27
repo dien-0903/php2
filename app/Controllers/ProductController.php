@@ -1,7 +1,7 @@
 <?php
 
 class ProductController extends Controller {
-    
+
     public function index() {
         $productModel = $this->model('Product');
 
@@ -27,6 +27,8 @@ class ProductController extends Controller {
         }
 
         $productModel = $this->model('Product');
+        $variantModel = $this->model('ProductVariant');
+
         $product = $productModel->show($id);
 
         if (!$product) {
@@ -34,9 +36,12 @@ class ProductController extends Controller {
             return;
         }
 
+        $variants = $variantModel->getByProduct($id);
+
         $this->view('user.product.detail', [
-            'title'   => $product['name'] . ' - TechMart',
-            'product' => $product
+            'title'    => $product['name'] . ' - TechMart',
+            'product'  => $product,
+            'variants' => $variants 
         ]);
     }
 }

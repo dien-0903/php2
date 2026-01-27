@@ -33,6 +33,8 @@ class AdminAuthController extends Controller {
                             'role'     => 'admin'
                         ];
                         
+                        $_SESSION['success'] = "Đăng nhập thành công! Chào mừng Quản trị viên " . $user['fullname'];
+                        
                         session_write_close();
                         
                         echo json_encode([
@@ -83,11 +85,14 @@ class AdminAuthController extends Controller {
                 }
 
                 $userModel->updatePassword($email, $password);
+                
+                $_SESSION['success'] = "Khôi phục mật khẩu Admin thành công! Hãy đăng nhập lại.";
+                
                 session_write_close();
 
                 echo json_encode([
                     'success' => true, 
-                    'message' => 'Đã khôi phục mật khẩu Admin! Hãy đăng nhập lại.',
+                    'message' => 'Thành công! Đang quay lại trang đăng nhập...',
                     'redirect' => BASE_URL . '/adminauth/login'
                 ]);
             } catch (Exception $e) {
@@ -98,8 +103,9 @@ class AdminAuthController extends Controller {
     
     public function logout() {
         if (session_status() === PHP_SESSION_NONE) session_start();
-        unset($_SESSION['user']);
+        $_SESSION = [];
         session_destroy();
+        
         header("Location: " . BASE_URL . "/adminauth/login");
         exit();
     }
