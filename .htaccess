@@ -1,0 +1,10 @@
+RewriteEngine On
+# Nếu dự án nằm trong thư mục PHP2, hãy đảm bảo RewriteBase đúng
+RewriteBase /PHP2/
+
+# Nếu là file hoặc thư mục thật thì truy cập trực tiếp (ảnh, css, js)
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# Chuyển hướng tất cả về index.php để Router xử lý
+RewriteRule ^(.*)$ index.php [L,QSA]

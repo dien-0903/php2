@@ -1,0 +1,10 @@
+.env
+app/.env
+
+vendor/
+app/vendor/
+
+storage/
+uploads/
+
+node_modules/
