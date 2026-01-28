@@ -138,7 +138,7 @@
             <div class="col-lg-4 text-dark">
                 <div class="card border-0 shadow-sm rounded-4 mb-4 bg-white">
                     <div class="card-body p-4">
-                        <h6 class="fw-black text-dark uppercase mb-3 small tracking-wider">Mã giảm giá TechMart</h6>
+                        <h6 class="fw-black text-dark uppercase mb-3 small tracking-wider">Mã giảm giá MD</h6>
                         <form action="{{ $cleanBaseUrl }}/cart/applyCoupon" method="POST">
                             <div class="input-group">
                                 <input type="text" name="coupon_code" 

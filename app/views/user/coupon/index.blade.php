@@ -9,7 +9,7 @@
 <div class="mb-5">
     <div class="text-center py-5 bg-white rounded-5 shadow-sm border border-slate-100 mb-5">
         <h1 class="text-4xl font-black text-slate-900 tracking-tighter uppercase mb-2">
-            <i class="bi bi-ticket-perforated text-primary me-2"></i>Kho Voucher TechMart
+            <i class="bi bi-ticket-perforated text-primary me-2"></i>Kho Voucher MD
         </h1>
         <p class="text-slate-500 max-w-lg mx-auto">Sưu tầm ngay những mã giảm giá độc quyền để nhận ưu đãi cực hời khi mua sắm các thiết bị công nghệ đỉnh cao.</p>
     </div>
@@ -57,7 +57,7 @@
                                         <h4 class="font-mono fw-black text-dark mb-0 tracking-tighter fs-4 uppercase">{{ $coupon['code'] }}</h4>
                                         <span class="badge bg-blue-50 text-blue-600 border rounded-pill px-2 py-1" style="font-size: 10px;">{{ $coupon['type'] == 'percent' ? 'Mã %' : 'Tiền mặt' }}</span>
                                     </div>
-                                    <p class="text-slate-500 small mb-0 mt-1 line-clamp-2">Áp dụng cho mọi đơn hàng tại TechMart.</p>
+                                    <p class="text-slate-500 small mb-0 mt-1 line-clamp-2">Áp dụng cho mọi đơn hàng tại MD.</p>
                                 </div>
                                 <div class="mt-4 pt-3 border-top d-flex justify-content-between align-items-center">
                                     <div class="small text-slate-400 font-bold uppercase" style="font-size: 9px;">HSD: VÔ HẠN</div>
@@ -135,7 +135,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                         <h4 class="font-mono fw-black text-dark mb-0 tracking-tighter fs-4 uppercase">${c.code}</h4>
                                         <span class="badge bg-blue-50 text-blue-600 border rounded-pill px-2 py-1" style="font-size: 10px;">${badge}</span>
                                     </div>
-                                    <p class="text-slate-500 small mb-0 mt-1">Áp dụng cho mọi đơn hàng tại TechMart.</p>
+                                    <p class="text-slate-500 small mb-0 mt-1">Áp dụng cho mọi đơn hàng tại MD.</p>
                                 </div>
                                 <div class="mt-4 pt-3 border-top d-flex justify-content-between align-items-center">
                                     <div class="small text-slate-400 font-bold uppercase" style="font-size: 9px;">HSD: VÔ HẠN</div>

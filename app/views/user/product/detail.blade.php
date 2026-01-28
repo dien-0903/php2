@@ -32,7 +32,7 @@
                 <img id="main-product-image" src="{{ rtrim(BASE_URL, '/') }}/public/uploads/products/{{ $product['image'] ?? 'default.jpg' }}" 
                      class="img-fluid max-h-[450px] transition-transform duration-500 group-hover:scale-105" 
                      alt="{{ $product['name'] }}"
-                     onerror="this.src='https://placehold.co/600x600?text=TechMart+Image'">
+                     onerror="this.src='https://placehold.co/600x600?text=MD+Image'">
                 
                 <div class="absolute top-4 left-4">
                     <span class="badge bg-primary rounded-pill px-3 py-2 fw-bold shadow-sm">
@@ -103,7 +103,7 @@
                     @endif
 
                     <div class="bg-blue-50 border border-blue-100 rounded-4 p-4 mt-4">
-                        <h6 class="fw-bold text-blue-800 mb-1 small uppercase"><i class="bi bi-truck me-2"></i>Chính sách TechMart</h6>
+                        <h6 class="fw-bold text-blue-800 mb-1 small uppercase"><i class="bi bi-truck me-2"></i>Chính sách MD</h6>
                         <p class="small text-blue-700 mb-0">Miễn phí giao hàng hỏa tốc trong 2h tại nội thành.</p>
                     </div>
                 </div>

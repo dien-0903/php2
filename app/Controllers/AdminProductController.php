@@ -156,7 +156,7 @@ class AdminProductController extends AdminController {
         $allowed = ['jpg', 'jpeg', 'png', 'webp'];
 
         if (in_array($ext, $allowed)) {
-            $fileName = "techmart_" . time() . "_" . uniqid() . "." . $ext;
+            $fileName = "MD_" . time() . "_" . uniqid() . "." . $ext;
             if (move_uploaded_file($file['tmp_name'], $targetDir . $fileName)) {
                 return $fileName;
             }

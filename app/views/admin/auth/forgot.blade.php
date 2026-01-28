@@ -36,7 +36,7 @@
         <form id="forgotAdminForm">
             <div class="mb-3">
                 <label class="form-label small fw-bold text-muted text-uppercase">Email quản trị viên</label>
-                <input type="email" name="email" class="form-control" placeholder="admin@techmart.vn" required>
+                <input type="email" name="email" class="form-control" placeholder="admin@MD.vn" required>
             </div>
 
             <div class="mb-3">

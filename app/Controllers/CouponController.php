@@ -35,7 +35,7 @@ class CouponController extends Controller {
             'totalPages'  => $result['totalPages'],
             'currentPage' => $page,
             'search'      => $search,
-            'title'       => 'Kho Voucher TechMart - Săn Ưu Đãi'
+            'title'       => 'Kho Voucher MD - Săn Ưu Đãi'
         ]);
     }
     public function check($code) {

@@ -7,7 +7,7 @@
                 <div class="bg-primary p-5 text-center text-white">
                     <i class="bi bi-person-plus-fill display-1"></i>
                     <h2 class="fw-black mt-3 uppercase tracking-tighter">TẠO TÀI KHOẢN</h2>
-                    <p class="text-white-50 small mb-0">Trở thành thành viên TechMart ngay hôm nay</p>
+                    <p class="text-white-50 small mb-0">Trở thành thành viên MD ngay hôm nay</p>
                 </div>
                 
                 <div class="card-body p-5 bg-white text-dark">

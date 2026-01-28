@@ -3,6 +3,7 @@
 class Coupon extends Model {
     protected $table = 'coupons';
 
+
     public function list($page = 1, $limit = 10, $search = '') {
         return $this->paginate($this->table, $page, $limit, $search, [], 'code');
     }
@@ -41,5 +42,35 @@ class Coupon extends Model {
 
     public function delete($id) {
         return $this->query("UPDATE {$this->table} SET deleted_at = NOW() WHERE id = ?", [$id]);
+    }
+
+    public function getAvailableList($page = 1, $limit = 6, $search = '') {
+        $offset = ($page - 1) * $limit;
+        $params = [];
+        
+        $sql = "SELECT * FROM {$this->table} WHERE deleted_at IS NULL AND status = 1";
+        
+
+        if (!empty($search)) {
+            $sql .= " AND code LIKE ?";
+            $params[] = "%$search%";
+        }
+
+        $countSql = "SELECT COUNT(*) as total FROM {$this->table} WHERE deleted_at IS NULL AND status = 1";
+        if (!empty($search)) {
+            $countSql .= " AND code LIKE ?";
+        }
+
+        $sql .= " ORDER BY id DESC LIMIT $offset, $limit";
+
+        $data = $this->query($sql, $params)->fetchAll();
+        
+        $totalRow = $this->query($countSql, $params)->fetch()['total'] ?? 0;
+
+        return [
+            'data' => $data,
+            'totalPages' => ceil($totalRow / $limit),
+            'currentPage' => $page
+        ];
     }
 }

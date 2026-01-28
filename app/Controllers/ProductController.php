@@ -12,7 +12,7 @@ class ProductController extends Controller {
         $result = $productModel->list($page, $limit, $search);
 
         $this->view('user.product.index', [
-            'title'       => 'Sản phẩm - TechMart',
+            'title'       => 'Sản phẩm - MD',
             'products'    => $result['data'],
             'totalPages'  => $result['totalPages'],
             'currentPage' => $page,
@@ -39,7 +39,7 @@ class ProductController extends Controller {
         $variants = $variantModel->getByProduct($id);
 
         $this->view('user.product.detail', [
-            'title'    => $product['name'] . ' - TechMart',
+            'title'    => $product['name'] . ' - MD',
             'product'  => $product,
             'variants' => $variants 
         ]);

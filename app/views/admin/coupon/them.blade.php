@@ -24,7 +24,7 @@
                         <input type="text" name="code" 
                                value="{{ ($_SESSION['error_type'] ?? '') === 'add' ? ($_SESSION['old']['code'] ?? '') : '' }}"
                                class="form-control bg-transparent border-0 py-2 shadow-none fw-bold text-uppercase" 
-                               placeholder="VD: TECHMART20, TET2026..." required autocomplete="off">
+                               placeholder="VD: MD20, TET2026..." required autocomplete="off">
                     </div>
                     <div class="form-text mt-1 extra-small italic text-muted">Nên viết liền, không dấu (Ví dụ: KM50K).</div>
                 </div>

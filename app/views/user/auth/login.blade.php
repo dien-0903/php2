@@ -7,7 +7,7 @@
                 <div class="bg-dark p-5 text-center text-white" style="background-color: #0f172a !important; border-bottom: 3px solid #2563eb;">
                     <i class="bi bi-person-circle display-1 text-primary"></i>
                     <h2 class="fw-black mt-3 uppercase tracking-tighter">ĐĂNG NHẬP</h2>
-                    <p class="text-white-50 small mb-0">Chào mừng bạn quay trở lại TechMart</p>
+                    <p class="text-white-50 small mb-0">Chào mừng bạn quay trở lại MD</p>
                 </div>
 
                 <div class="card-body p-5 bg-white">

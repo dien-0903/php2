@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Login - TechMart System</title>
+    <title>Admin Login - MD</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     <style>
@@ -82,7 +82,7 @@
     <div class="login-header">
         <i class="bi bi-shield-lock-fill"></i>
         <h3 class="fw-bold mb-0" style="letter-spacing: -1px;">HỆ THỐNG QUẢN TRỊ</h3>
-        <p class="small opacity-75 mt-1">TechMart Internal Control</p>
+        <p class="small opacity-75 mt-1">MD Internal Control</p>
     </div>
 
     <div class="card-body p-4 p-md-5">
@@ -93,7 +93,7 @@
                 <label class="form-label small fw-bold text-muted text-uppercase">Email Admin</label>
                 <div class="input-group">
                     <span class="input-group-text"><i class="bi bi-envelope"></i></span>
-                    <input type="email" name="email" class="form-control shadow-none" placeholder="admin@techmart.vn" required>
+                    <input type="email" name="email" class="form-control shadow-none" placeholder="admin@MD.vn" required>
                 </div>
             </div>
 

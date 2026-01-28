@@ -19,7 +19,7 @@ class CartController extends Controller {
         $total = $subtotal - $discount;
 
         $this->view('user.cart.index', [
-            'title' => 'Giỏ hàng - TechMart',
+            'title' => 'Giỏ hàng - MD',
             'cart' => $cart,
             'subtotal' => $subtotal,
             'discount' => $discount,
