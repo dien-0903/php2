@@ -1,6 +1,109 @@
-@extends('user.layouts.header')
+@include('user.layouts.header')
 
-@section('content')
-    <h1>Trang chủ</h1>
-    <p>Sản phẩm nổi bật – Banner – Khuyến mãi</p>
-@endsection
+@if(isset($_SESSION['success']))
+    <div class="container mt-4">
+        <div class="alert alert-success alert-dismissible fade show border-0 shadow-sm rounded-4 py-3 px-4 animate-bounce-in" role="alert">
+            <div class="d-flex align-items-center text-success fw-bold">
+                <i class="bi bi-check-circle-fill fs-4 me-3"></i>
+                <span>{{ $_SESSION['success'] }}</span>
+            </div>
+            <button type="button" class="btn-close shadow-none" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    </div>
+    @php unset($_SESSION['success']); @endphp
+@endif
+
+<div class="container py-4">
+
+    <div class="mb-5">
+        <div class="card border-0 rounded-4 overflow-hidden shadow-lg relative group" style="height: 400px;">
+            <img src="https://placehold.co/1200x500/1e293b/FFF?text=New+Collection" class="w-100 h-100 object-cover transition-transform duration-700 group-hover:scale-105" alt="Banner">
+            
+            <div class="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center px-4 px-md-5" style="background: linear-gradient(to right, rgba(0,0,0,0.7), transparent);">
+                <div class="text-white ps-md-4">
+                    <span class="badge bg-danger rounded-pill mb-3 px-3 py-2 animate-bounce-in">NEW ARRIVAL</span>
+                    <h1 class="fw-bold display-4 mb-2 tracking-tighter">CÔNG NGHỆ MỚI</h1>
+                    <p class="text-light mb-4 fs-5">Khám phá những thiết bị vừa cập bến TechStore.</p>
+                    <a href="{{ rtrim(BASE_URL, '/') }}/product/index" class="btn btn-light rounded-pill px-5 py-3 fw-bold text-primary shadow">
+                        MUA NGAY <i class="bi bi-arrow-right ms-2"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
+        <div>
+            <h2 class="fw-black text-uppercase mb-1" style="color: #0f172a; font-weight: 900; letter-spacing: -1px;">
+                SẢN PHẨM MỚI
+            </h2>
+            <p class="text-secondary mb-0">Những siêu phẩm công nghệ vừa ra mắt</p>
+        </div>
+        
+        <a href="{{ rtrim(BASE_URL, '/') }}/product/index" class="btn btn-outline-primary rounded-pill px-4 fw-bold d-flex align-items-center gap-2" style="width: fit-content;">
+            Xem tất cả <i class="bi bi-arrow-right"></i>
+        </a>
+    </div>
+
+    <div class="row g-4 mb-5">
+        @if(isset($newProducts) && !empty($newProducts))
+            @foreach($newProducts as $item)
+                <div class="col-6 col-md-4 col-lg-3">
+                    <div class="card border-0 shadow-sm h-100 rounded-4 overflow-hidden group bg-white hover-shadow transition-all">
+                        
+                        <a href="{{ rtrim(BASE_URL, '/') }}/product/show/{{ $item['id'] }}" class="text-decoration-none">
+                            <div class="bg-light p-4 d-flex align-items-center justify-content-center position-relative overflow-hidden" style="height: 220px;">
+                                <img src="{{ rtrim(BASE_URL, '/') }}/public/uploads/products/{{ $item['image'] ?? 'default.jpg' }}" 
+                                     class="mw-100 mh-100 object-contain transition-transform duration-500" 
+                                     style="max-height: 150px;" 
+                                     alt="{{ $item['name'] }}"
+                                     onerror="this.src='https://placehold.co/400x400?text=No+Image'">
+                                
+                                <div class="position-absolute top-0 start-0 m-3">
+                                    <span class="badge bg-primary rounded-pill px-2 py-1 small fw-bold shadow-sm" style="font-size: 10px;">NEW</span>
+                                </div>
+                            </div>
+
+                            <div class="card-body p-3 d-flex flex-column text-dark">
+                                <div class="mb-auto">
+                                    <span class="text-primary fw-bold text-uppercase" style="font-size: 10px; letter-spacing: 1px;">
+                                        {{ $item['category_name'] ?? 'Thiết bị' }}
+                                    </span>
+                                    <h6 class="card-title fw-bold text-dark mt-1 mb-2 text-truncate-2" style="min-height: 2.5rem;">
+                                        {{ $item['name'] }}
+                                    </h6>
+                                </div>
+                                
+                                <div class="mt-2">
+                                    <p class="text-danger fw-bold fs-5 mb-0">
+                                        {{ number_format($item['price'], 0, ',', '.') }}đ
+                                    </p>
+                                </div>
+                            </div>
+                        </a>
+
+                        <div class="card-body pt-0 px-3 pb-3">
+                            <div class="d-grid">
+                                <a href="{{ rtrim(BASE_URL, '/') }}/cart/add/{{ $item['id'] }}" 
+                                   class="btn btn-primary rounded-pill fw-bold py-2 shadow-sm text-white" style="font-size: 11px;">
+                                    <i class="bi bi-cart-plus me-1"></i> THÊM VÀO GIỎ
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            @endforeach
+        @else
+            <div class="col-12 text-center py-5">
+                <div class="bg-white p-5 rounded-4 shadow-sm border border-dashed">
+                    <i class="bi bi-box-seam fs-1 text-secondary mb-3 d-block"></i>
+                    <p class="text-secondary fw-bold">Đang cập nhật sản phẩm mới...</p>
+                </div>
+            </div>
+        @endif
+    </div>
+
+</div>
+
+
+@include('user.layouts.footer')

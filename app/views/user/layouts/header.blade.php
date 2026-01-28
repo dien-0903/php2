@@ -45,7 +45,7 @@
 
 <nav class="navbar navbar-expand-lg navbar-dark navbar-user sticky-top shadow-sm">
     <div class="container">
-        <a class="navbar-brand fs-3" href="{{ BASE_URL }}/product/index">
+        <a class="navbar-brand fs-3" href="{{ BASE_URL }}/home/index">
             <i class="bi bi-cpu-fill me-2 text-primary"></i>MYDUYEN
         </a>
         

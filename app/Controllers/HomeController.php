@@ -1,13 +1,20 @@
 <?php
 
-class HomeController
+class HomeController extends Controller
 {
     public function index()
     {
-        View::render('user.home.index', [
-            'title' => 'Trang chủ',
-            'user'  => $_SESSION['user'] ?? null,
-            'cart'  => $_SESSION['cart'] ?? []
+        $productModel = $this->model('Product');
+
+        $result = $productModel->list(1, 8, '');
+        
+        $newProducts = $result['data'] ?? [];
+
+        $this->view('user.home.index', [
+            'title'       => 'Trang chủ - TechStore',
+            'newProducts' => $newProducts, 
+            'user'        => $_SESSION['user'] ?? null,
+            'cart'        => $_SESSION['cart'] ?? []
         ]);
     }
 }
