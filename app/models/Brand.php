@@ -4,7 +4,7 @@ class Brand extends Model {
     
     protected $table = 'brands';
 
-    public function list($page = 1, $limit = 10, $search = '') {
+    public function list($page = 1, $limit = 8, $search = '') {
         return $this->paginate(
             $this->table,
             $page,

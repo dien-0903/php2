@@ -4,6 +4,10 @@ class HomeController extends Controller
 {
     public function index()
     {
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+
         $productModel = $this->model('Product');
         $couponModel = $this->model('Coupon'); 
 

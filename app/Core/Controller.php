@@ -56,9 +56,7 @@ class Controller
         echo "<h2>Không tìm thấy trang</h2>";
         echo "<p>" . htmlspecialchars($message) . "</p>";
         
-        // --- DÒNG ĐÃ SỬA: Thêm dấu / trước product ---
-        echo "<a href='/PHP2/product/index'>Quay lại trang chủ</a>";
-        // ---------------------------------------------
+        echo "<a href='/PHP2/home/index'>Quay lại trang chủ</a>";
         
         echo "</div>";
         exit();

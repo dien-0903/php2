@@ -4,7 +4,7 @@ class Product extends Model {
     
     protected $table = 'products';
 
-    public function list($page = 1, $limit = 10, $search = '', $filters = []) {
+    public function list($page = 1, $limit = 8, $search = '', $filters = []) {
 
         return $this->paginate(
             $this->table,

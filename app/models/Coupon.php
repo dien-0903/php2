@@ -4,7 +4,7 @@ class Coupon extends Model {
     protected $table = 'coupons';
 
 
-    public function list($page = 1, $limit = 10, $search = '') {
+    public function list($page = 1, $limit = 6, $search = '') {
         return $this->paginate($this->table, $page, $limit, $search, [], 'code');
     }
 

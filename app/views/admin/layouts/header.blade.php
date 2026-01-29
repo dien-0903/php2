@@ -109,7 +109,7 @@
 
                 <ul class="navbar-nav ms-auto align-items-center">
                     <li class="nav-item me-3">
-                        <a class="btn btn-view-site px-3" href="{{ BASE_URL }}/product/index" target="_blank">
+                        <a class="btn btn-view-site px-3" href="{{ BASE_URL }}/home/index" target="_blank">
                             <i class="bi bi-box-arrow-up-right me-1"></i>Xem Website
                         </a>
                     </li>
