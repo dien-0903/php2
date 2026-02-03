@@ -115,11 +115,13 @@
                     <div class="card border-0 shadow-sm h-100 rounded-4 overflow-hidden group bg-white hover-shadow transition-all">
                         <a href="{{ rtrim(BASE_URL, '/') }}/product/show/{{ $item['id'] }}" class="text-decoration-none">
                             <div class="bg-light p-4 d-flex align-items-center justify-content-center position-relative overflow-hidden" style="height: 220px;">
-                                <img src="{{ rtrim(BASE_URL, '/') }}/public/uploads/products/{{ $item['image'] ?? 'default.jpg' }}" 
-                                     class="mw-100 mh-100 object-contain transition-transform duration-500" 
-                                     style="max-height: 150px;" 
-                                     alt="{{ $item['name'] }}"
-                                     onerror="this.src='https://placehold.co/400x400?text=No+Image'">
+                                @php        
+                                $APP_URL = 'http://localhost/PHP2';
+                                $imagePath = $APP_URL . '/public/uploads/products/' . ($item['image'] ?: 'default.jpg');
+                            @endphp
+                            <img src="{{ $imagePath }}" 
+                                 class="rounded shadow-sm border" width="200" height="200" style="object-fit: cover;"
+                                 onerror="this.src='https://placehold.co/400x400?text=No+Image'">
                                 <div class="position-absolute top-0 start-0 m-3">
                                     <span class="badge bg-primary rounded-pill px-2 py-1 small fw-bold shadow-sm" style="font-size: 10px;">NEW</span>
                                 </div>

@@ -4,37 +4,30 @@
             
             <div class="modal-header bg-warning text-dark border-0">
                 <h5 class="modal-title fw-bold">
-                    <i class="bi bi-pencil-square me-2"></i>Cập Nhật Thông Tin Sản Phẩm
+                    <i class="bi bi-pencil-square me-2"></i>Cập Nhật Sản Phẩm
                 </h5>
                 <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
 
             <div class="modal-body p-4 text-dark">
-                @if(isset($_SESSION['error']) && ($_SESSION['error_type'] ?? '') === 'edit')
-                    <div class="alert alert-danger border-0 shadow-sm mb-4 rounded-3 d-flex align-items-center animate-shake">
-                        <i class="bi bi-exclamation-triangle-fill me-2 fs-5"></i>
-                        <div>{{ $_SESSION['error'] }}</div>
-                    </div>
-                @endif
-
                 <div class="row mb-3">
-                    <div class="col-md-8">
-                        <label class="form-label fw-bold small">TÊN SẢN PHẨM</label>
-                        <input type="text" name="name" id="edit_name" 
-                               value="{{ (($_SESSION['error_type'] ?? '') === 'edit') ? ($_SESSION['old']['name'] ?? '') : '' }}"
-                               class="form-control rounded-3 shadow-none border-slate-200" required>
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold small text-secondary">TÊN SẢN PHẨM</label>
+                        <input type="text" name="name" id="edit_name" class="form-control rounded-3 shadow-none border-slate-200" required>
                     </div>
-                    <div class="col-md-4">
-                        <label class="form-label fw-bold small">GIÁ BÁN (VNĐ)</label>
-                        <input type="number" name="price" id="edit_price" 
-                               value="{{ (($_SESSION['error_type'] ?? '') === 'edit') ? ($_SESSION['old']['price'] ?? '') : '' }}"
-                               class="form-control rounded-3 shadow-none border-slate-200" min="0" required>
+                    <div class="col-md-3">
+                        <label class="form-label fw-bold small text-secondary">GIÁ BÁN (VNĐ)</label>
+                        <input type="number" name="price" id="edit_price" class="form-control rounded-3 shadow-none border-slate-200" min="0" required>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label fw-bold small text-secondary">TỒN KHO</label>
+                        <input type="number" name="stock" id="edit_stock" class="form-control rounded-3 shadow-none border-slate-200" min="0">
                     </div>
                 </div>
 
                 <div class="row mb-3">
                     <div class="col-md-6">
-                        <label class="form-label fw-bold small">DANH MỤC</label>
+                        <label class="form-label fw-bold small text-secondary">DANH MỤC</label>
                         <select name="category_id" id="edit_category_id" class="form-select rounded-3 shadow-none border-slate-200" required>
                             @if(!empty($all_categories))
                                 @foreach ($all_categories as $c)
@@ -44,7 +37,7 @@
                         </select>
                     </div>
                     <div class="col-md-6">
-                        <label class="form-label fw-bold small">THƯƠNG HIỆU</label>
+                        <label class="form-label fw-bold small text-secondary">THƯƠNG HIỆU</label>
                         <select name="brand_id" id="edit_brand_id" class="form-select rounded-3 shadow-none border-slate-200" required>
                             @if(!empty($all_brands))
                                 @foreach ($all_brands as $b)
@@ -55,29 +48,52 @@
                     </div>
                 </div>
 
-                <div class="row align-items-center">
-                    <div class="col-md-3 text-center">
-                        <div class="mb-2 small text-muted font-bold uppercase" style="font-size: 10px;">Ảnh hiện tại</div>
-                        <div class="bg-light rounded-3 p-2 border border-slate-100 shadow-sm">
-                            <img id="edit_img_preview" src="" class="img-fluid rounded" style="max-height: 120px; object-fit: contain;">
+                <div class="mb-3">
+                    <label class="form-label fw-bold small text-secondary">MÔ TẢ CHI TIẾT</label>
+                    <textarea name="description" id="edit_description" class="form-control rounded-3 shadow-none border-slate-200" rows="3"></textarea>
+                </div>
+
+                <div class="row mb-3">
+                    <!-- PHẦN ẢNH ĐẠI DIỆN -->
+                    <div class="col-md-6 border-end">
+                        <label class="form-label fw-bold small text-secondary text-uppercase">Ảnh đại diện</label>
+                        <div class="bg-light rounded-4 p-2 border mb-2 text-center d-flex align-items-center justify-content-center shadow-inner" style="height: 220px; overflow: hidden;">
+                            <img id="edit_img_preview" src="" 
+                                 class="img-fluid rounded-3" 
+                                 style="max-height: 100%; object-fit: contain;" 
+                                 onerror="this.src='https://placehold.co/300x300?text=No+Image'">
+                        </div>
+                        <div class="input-group shadow-sm">
+                            <span class="input-group-text bg-white border-end-0 text-primary"><i class="bi bi-camera-fill"></i></span>
+                            <input type="file" name="image" class="form-control rounded-end-3 shadow-none border-slate-200" accept="image/*" onchange="previewMainImage(this)">
                         </div>
                     </div>
-                    <div class="col-md-9">
-                        <label class="form-label fw-bold small">THAY ĐỔI HÌNH ẢNH (KHÔNG CHỌN NẾU GIỮ CŨ)</label>
-                        <div class="input-group">
-                            <span class="input-group-text bg-light border-end-0 border-slate-200"><i class="bi bi-image"></i></span>
-                            <input type="file" name="image" class="form-control rounded-end-3 shadow-none border-slate-200" accept="image/*">
+
+                    <!-- PHẦN THƯ VIỆN ẢNH -->
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold small text-secondary text-uppercase">Thư viện ảnh</label>
+                        
+                        <div class="small text-muted mb-1" style="font-size: 10px; font-weight: 800;">ĐÃ LƯU:</div>
+                        <div id="edit_gallery_container" class="row g-2 border rounded-3 p-2 bg-slate-50 mb-3 overflow-auto shadow-inner" style="height: 110px;">
+                            <!-- JS sẽ đổ ảnh cũ vào đây -->
                         </div>
-                        <div class="form-text mt-2 text-muted small">
-                            <i class="bi bi-info-circle me-1"></i> Để trống nếu bạn muốn giữ lại hình ảnh đang hiển thị bên cạnh.
+                        
+                        <div class="small text-primary mb-1" style="font-size: 10px; font-weight: 800;">MỚI CHỌN:</div>
+                        <div id="new_gallery_preview_container" class="row g-2 border rounded-3 p-2 bg-white mb-2 overflow-auto shadow-inner" style="height: 110px;">
+                            <div class="col-12 text-center py-4 text-muted x-small italic">Chưa có ảnh mới</div>
+                        </div>
+
+                        <div class="input-group shadow-sm">
+                            <span class="input-group-text bg-white border-end-0 text-info"><i class="bi bi-images"></i></span>
+                            <input type="file" name="gallery[]" class="form-control rounded-end-3 shadow-none border-slate-200" accept="image/*" multiple onchange="previewNewGallery(this)">
                         </div>
                     </div>
                 </div>
             </div>
 
             <div class="modal-footer border-0 p-4 pt-0">
-                <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Đóng</button>
-                <button type="submit" class="btn btn-warning rounded-pill px-4 fw-bold shadow-sm">
+                <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Hủy bỏ</button>
+                <button type="submit" class="btn btn-warning rounded-pill px-4 fw-bold shadow-sm text-dark">
                     LƯU THAY ĐỔI
                 </button>
             </div>
@@ -85,23 +101,43 @@
     </div>
 </div>
 
-@php
-    if (isset($_SESSION['error_type']) && $_SESSION['error_type'] === 'edit') {
-        unset($_SESSION['error']);
-        unset($_SESSION['error_type']);
-        unset($_SESSION['old']);
+<script>
+    function previewMainImage(input) {
+        const preview = document.getElementById('edit_img_preview');
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(e) { preview.src = e.target.result; }
+            reader.readAsDataURL(input.files[0]);
+        }
     }
-@endphp
+
+    function previewNewGallery(input) {
+        const container = document.getElementById('new_gallery_preview_container');
+        container.innerHTML = ''; 
+        if (input.files && input.files.length > 0) {
+            Array.from(input.files).forEach(file => {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const col = document.createElement('div');
+                    col.className = 'col-4';
+                    col.innerHTML = `<div class="gallery-item-wrapper border border-info rounded"><img src="${e.target.result}" class="img-fluid rounded"></div>`;
+                    container.appendChild(col);
+                }
+                reader.readAsDataURL(file);
+            });
+        } else {
+            container.innerHTML = '<div class="col-12 text-center py-4 text-muted x-small italic">Chưa có ảnh mới</div>';
+        }
+    }
+</script>
 
 <style>
-    @keyframes shakeEdit {
-        0%, 100% { transform: translateX(0); }
-        20%, 60% { transform: translateX(-6px); }
-        40%, 80% { transform: translateX(6px); }
-    }
-    .animate-shake { animation: shakeEdit 0.4s ease-in-out; }
-    
-    #editProductModal .modal-header {
-        border-bottom: 2px solid #ffc107;
-    }
+    .x-small { font-size: 11px; }
+    .bg-slate-50 { background-color: #f8fafc; }
+    .shadow-inner { box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.05); }
+    #edit_gallery_container::-webkit-scrollbar, #new_gallery_preview_container::-webkit-scrollbar { width: 4px; }
+    #edit_gallery_container::-webkit-scrollbar-thumb, #new_gallery_preview_container::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+    .gallery-item-wrapper { position: relative; width: 100%; padding-top: 100%; overflow: hidden; background: #fff; }
+    .gallery-item-wrapper img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; }
+    .btn-delete-gallery-img { position: absolute; top: -4px; right: -4px; padding: 0px 5px; font-size: 10px; z-index: 10; border-radius: 50%; line-height: 1.4; box-shadow: 0 2px 4px rgba(0,0,0,0.3); }
 </style>

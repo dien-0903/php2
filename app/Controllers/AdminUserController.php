@@ -113,15 +113,68 @@ class AdminUserController extends AdminController {
         }
     }
 
+    // --- MỚI: CHỨC NĂNG ĐỔI MẬT KHẨU CHO USER ---
+    public function updatePassword($id) {
+        if (session_status() === PHP_SESSION_NONE) session_start();
+        
+        $userModel = $this->model('User');
+        $user = $userModel->show($id);
+
+        if (!$user) {
+            $_SESSION['error'] = "User không tồn tại!";
+            $this->redirect('adminuser/index');
+            return;
+        }
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $newPassword = $_POST['new_password'] ?? '';
+            $confirmPassword = $_POST['confirm_password'] ?? '';
+
+            if (strlen($newPassword) < 6) {
+                $_SESSION['error'] = "Mật khẩu phải có ít nhất 6 ký tự!";
+                // Lưu ý: Cần xử lý redirect lại trang edit password nếu có view riêng
+                // Hoặc flash session và quay lại trang index
+                session_write_close();
+                $this->redirect('adminuser/index'); 
+                return;
+            }
+
+            if ($newPassword !== $confirmPassword) {
+                $_SESSION['error'] = "Xác nhận mật khẩu không khớp!";
+                session_write_close();
+                $this->redirect('adminuser/index');
+                return;
+            }
+
+            try {
+                // Hàm updatePassword đã có sẵn trong Model User (được cung cấp ở context)
+                $userModel->updatePassword($user['email'], $newPassword);
+                $_SESSION['success'] = "Đã đổi mật khẩu cho user {$user['fullname']} thành công!";
+            } catch (Exception $e) {
+                $_SESSION['error'] = "Lỗi hệ thống: " . $e->getMessage();
+            }
+
+            session_write_close();
+            $this->redirect('adminuser/index');
+        } else {
+            // Nếu là GET request -> Hiển thị form đổi pass (nếu bạn muốn làm trang riêng)
+            // Hiện tại tôi redirect về index để xử lý qua Modal hoặc Form chung
+            $this->redirect('adminuser/index'); 
+        }
+    }
+
     public function destroy($id) {
         $userModel = $this->model('User');
         $user = $userModel->show($id);
 
-        if ($user && $user['role'] === 'admin') {
-            $_SESSION['error'] = "CẢNH BÁO: Hệ thống không cho phép xóa tài khoản Quản trị viên!";
-            session_write_close();
-            $this->redirect('adminuser/index');
-            return;
+        if ($user && ($user['role'] ?? '') === 'admin') {
+            // Ngăn chặn xóa chính mình nếu là admin đang đăng nhập
+            if (isset($_SESSION['user']) && $_SESSION['user']['id'] == $id) {
+                $_SESSION['error'] = "Bạn không thể xóa tài khoản của chính mình!";
+                session_write_close();
+                $this->redirect('adminuser/index');
+                return;
+            }
         }
 
         $userModel->delete($id);

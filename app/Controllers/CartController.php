@@ -1,112 +1,133 @@
 <?php
 
 class CartController extends Controller {
-    
-    public function index() {
+
+    public function __construct() {
         if (session_status() === PHP_SESSION_NONE) session_start();
+    }
+
+    /**
+     * Hiển thị giỏ hàng và đồng bộ tồn kho
+     */
+    public function index() {
         $cart = $_SESSION['cart'] ?? [];
-        $subtotal = 0;
-        foreach ($cart as $item) {
-            $subtotal += $item['price'] * $item['quantity'];
+        $productModel = $this->model('Product');
+        $baseModel = $this->model('Model'); 
+
+        // Cập nhật tồn kho mới nhất từ Database
+        foreach ($cart as $key => &$item) {
+            $currentStock = 0;
+            if (isset($item['variant_id']) && $item['variant_id'] > 0) {
+                $variant = $baseModel->query("SELECT stock FROM product_variants WHERE id = ?", [$item['variant_id']])->fetch();
+                if ($variant) $currentStock = $variant['stock'];
+            } else {
+                $prod = $productModel->show($item['id']);
+                if ($prod) $currentStock = $prod['stock'];
+            }
+            $item['stock'] = (int)$currentStock;
+            
+            // Nếu số lượng trong giỏ > kho, tự động giảm xuống
+            if ($item['quantity'] > $item['stock']) {
+                $item['quantity'] = $item['stock'];
+            }
         }
+        unset($item);
+        $_SESSION['cart'] = $cart;
+
+        $subtotal = 0;
+        foreach($cart as $item) { $subtotal += $item['price'] * $item['quantity']; }
 
         $discount = 0;
-        $coupon = $_SESSION['applied_coupon'] ?? null;
+        $coupon = $_SESSION['coupon'] ?? null;
         if ($coupon) {
             $discount = ($coupon['type'] === 'percent') ? ($subtotal * $coupon['value'] / 100) : $coupon['value'];
+            if ($discount > $subtotal) $discount = $subtotal;
         }
-        if ($discount > $subtotal) $discount = $subtotal;
-        $total = $subtotal - $discount;
 
         $this->view('user.cart.index', [
-            'title' => 'Giỏ hàng - MD',
-            'cart' => $cart,
+            'title'    => 'Giỏ hàng của bạn',
+            'cart'     => $cart,
             'subtotal' => $subtotal,
             'discount' => $discount,
-            'coupon' => $coupon,
-            'total' => $total
+            'total'    => $subtotal - $discount,
+            'coupon'   => $coupon
         ]);
     }
 
-    public function add($id, $variantId = null) {
-        if (session_status() === PHP_SESSION_NONE) session_start();
-
+    /**
+     * FIX LỖI 404: Thêm sản phẩm vào giỏ hàng
+     */
+    public function add($productId, $variantId = null) {
         $productModel = $this->model('Product');
-        $product = $productModel->show($id);
+        $baseModel = $this->model('Model');
+        
+        // 1. Lấy thông tin sản phẩm/biến thể
+        if ($variantId) {
+            $data = $baseModel->query("SELECT p.name, p.image, pv.price, pv.stock 
+                                     FROM product_variants pv 
+                                     JOIN products p ON pv.product_id = p.id 
+                                     WHERE pv.id = ?", [$variantId])->fetch();
+            $variantInfo = "Biến thể chọn"; 
+        } else {
+            $data = $productModel->show($productId);
+            $variantInfo = "Mặc định";
+        }
 
-        if (!$product) {
+        if (!$data || $data['stock'] <= 0) {
+            $_SESSION['error'] = "Sản phẩm đã hết hàng!";
             $this->redirect('product/index');
             return;
         }
 
-        $cartKey = "p_" . $id; 
-        $name = $product['name'];
-        $price = $product['price'];
-        $image = $product['image'];
-        $attributes = ""; 
-
-        if ($variantId && $variantId !== 'undefined' && $variantId > 0) {
-            $variant = $this->model('Model')->query(
-                "SELECT v.*, c.name as color_name, s.name as size_name 
-                 FROM product_variants v 
-                 LEFT JOIN colors c ON v.color_id = c.id 
-                 LEFT JOIN sizes s ON v.size_id = s.id 
-                 WHERE v.id = ? AND v.product_id = ?", [$variantId, $id]
-            )->fetch();
-
-            if ($variant) {
-                $cartKey = "v_" . $variantId; 
-                $price = $variant['price'];
-                $image = (!empty($variant['image']) && $variant['image'] != 'default.jpg') ? $variant['image'] : $product['image'];
-                $attributes = ($variant['color_name'] ?: "") . ($variant['size_name'] ? " - " . $variant['size_name'] : "");
-            }
-        }
-        if (!isset($_SESSION['cart'][$cartKey])) {
-            $_SESSION['cart'][$cartKey] = [
-                'id'         => $id,
-                'variant_id' => $variantId,
-                'name'       => $name,
-                'attributes' => $attributes,
-                'price'      => (float)$price,
-                'image'      => $image,
-                'quantity'   => 1
-            ];
-        } else {
-            $_SESSION['cart'][$cartKey]['quantity']++;
-        }
-
-        $_SESSION['success'] = "Đã thêm vào giỏ hàng!";
-        session_write_close();
+        // 2. Tạo key duy nhất cho sản phẩm/biến thể trong giỏ
+        $key = $productId . ($variantId ? '_' . $variantId : '');
         
-        $referer = $_SERVER['HTTP_REFERER'] ?? (BASE_URL . '/product/index');
-        header("Location: " . $referer);
-        exit();
+        if (!isset($_SESSION['cart'])) $_SESSION['cart'] = [];
+
+        // 3. Kiểm tra tồn kho trước khi thêm
+        $currentInCart = $_SESSION['cart'][$key]['quantity'] ?? 0;
+        if ($currentInCart + 1 > $data['stock']) {
+            $_SESSION['error'] = "Sản phẩm này chỉ còn " . $data['stock'] . " món trong kho!";
+        } else {
+            if (isset($_SESSION['cart'][$key])) {
+                $_SESSION['cart'][$key]['quantity']++;
+            } else {
+                $_SESSION['cart'][$key] = [
+                    'id'           => $productId,
+                    'variant_id'   => $variantId,
+                    'name'         => $data['name'],
+                    'price'        => $data['price'],
+                    'image'        => $data['image'],
+                    'quantity'     => 1,
+                    'stock'        => $data['stock'],
+                    'variant_info' => $variantInfo
+                ];
+            }
+            $_SESSION['success'] = "Đã thêm vào giỏ hàng!";
+        }
+
+        $this->redirect('cart/index');
     }
 
     public function updateQuantity() {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            if (session_status() === PHP_SESSION_NONE) session_start();
             $key = $_POST['id'];
             $quantity = (int)$_POST['quantity'];
-            if ($quantity > 0) $_SESSION['cart'][$key]['quantity'] = $quantity;
-            else unset($_SESSION['cart'][$key]);
-            session_write_close();
+            if (isset($_SESSION['cart'][$key])) {
+                $stock = $_SESSION['cart'][$key]['stock'];
+                if ($quantity > $stock) {
+                    $quantity = $stock;
+                    $_SESSION['error'] = "Đã đạt giới hạn tồn kho!";
+                }
+                if ($quantity > 0) $_SESSION['cart'][$key]['quantity'] = $quantity;
+                else unset($_SESSION['cart'][$key]);
+            }
             $this->redirect('cart/index');
         }
     }
 
     public function remove($key) {
-        if (session_status() === PHP_SESSION_NONE) session_start();
         unset($_SESSION['cart'][$key]);
-        session_write_close();
-        $this->redirect('cart/index');
-    }
-
-    public function clear() {
-        if (session_status() === PHP_SESSION_NONE) session_start();
-        unset($_SESSION['cart']);
-        unset($_SESSION['applied_coupon']);
-        session_write_close();
         $this->redirect('cart/index');
     }
 }

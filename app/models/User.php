@@ -39,19 +39,27 @@ class User extends Model {
         ]);
     }
 
+    /**
+     * FIX: Cập nhật hàm update để lưu được phone
+     */
     public function update($id, $data) {
+        // Lấy dữ liệu cũ để tránh làm mất các trường không truyền vào $data
+        $currentUser = $this->show($id);
+
         $sql = "UPDATE {$this->table} SET 
                 fullname = :fullname, 
                 email = :email, 
+                phone = :phone,  
                 role = :role, 
                 updated_at = NOW() 
                 WHERE id = :id";
         
         $params = [
             'id'       => $id,
-            'fullname' => $data['fullname'],
-            'email'    => $data['email'],
-            'role'     => $data['role']
+            'fullname' => $data['fullname'] ?? $currentUser['fullname'],
+            'email'    => $data['email'] ?? $currentUser['email'],
+            'phone'    => $data['phone'] ?? $currentUser['phone'],
+            'role'     => $data['role'] ?? $currentUser['role']
         ];
 
         return $this->query($sql, $params);

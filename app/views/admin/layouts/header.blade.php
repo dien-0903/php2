@@ -1,7 +1,5 @@
 <!DOCTYPE html>
-
 <html lang="vi">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -41,7 +39,8 @@
         }
 
         .nav-link:hover,
-        .nav-link.active {
+        .nav-link.active,
+        .show > .nav-link {
             color: #10b981 !important;
             background: rgba(16, 185, 129, 0.1);
             border-radius: 8px;
@@ -64,17 +63,37 @@
             border: none;
             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
             border-radius: 12px;
+            font-size: 0.85rem;
         }
+
+        .dropdown-item {
+            font-weight: 500;
+            color: #475569;
+            transition: 0.2s;
+        }
+
+        .dropdown-item:hover {
+            background-color: rgba(16, 185, 129, 0.05);
+            color: #10b981;
+        }
+
+        /* Tiện ích bổ sung */
+        .uppercase { text-transform: uppercase; }
+        .animate-slide-down { animation: slideDown 0.4s ease-out; }
+        @keyframes slideDown { 
+            from { transform: translateY(-10px); opacity: 0; } 
+            to { transform: translateY(0); opacity: 1; } 
+        }
+        .bg-primary-subtle { background-color: rgba(13, 110, 253, 0.1) !important; }
+        .extra-small { font-size: 11px; }
     </style>
-
-
 </head>
-
 <body>
 
     <nav class="navbar navbar-expand-lg navbar-dark navbar-admin sticky-top shadow-sm">
         <div class="container">
-            <a class="navbar-brand fw-bold fs-4 d-flex align-items-center" href="{{ BASE_URL }}/adminproduct/index">
+            <!-- Logo -->
+            <a class="navbar-brand fw-bold fs-4 d-flex align-items-center" href="{{ rtrim(BASE_URL, '/') }}/adminproduct/index">
                 <i class="bi bi-shield-lock-fill me-2"></i>ADMIN MD
             </a>
 
@@ -84,32 +103,58 @@
 
             <div class="collapse navbar-collapse" id="adminMenu">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
+                    <!-- MENU SẢN PHẨM DROPDOWN -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Sản phẩm
+                        </a>
+                        <ul class="dropdown-menu p-2 shadow-lg">
+                            <li>
+                                <a class="dropdown-item rounded-2 py-2" href="{{ rtrim(BASE_URL, '/') }}/adminproduct/index">
+                                    <i class="bi bi-box-seam me-2"></i>Quản lý sản phẩm
+                                </a>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <a class="dropdown-item rounded-2 py-2" href="{{ rtrim(BASE_URL, '/') }}/admincategory/index">
+                                    <i class="bi bi-tags me-2"></i>Danh mục
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item rounded-2 py-2" href="{{ rtrim(BASE_URL, '/') }}/adminbrand/index">
+                                    <i class="bi bi-award me-2"></i>Thương hiệu
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item rounded-2 py-2" href="{{ rtrim(BASE_URL, '/') }}/admincolor/index">
+                                    <i class="bi bi-palette me-2"></i>Màu sắc
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item rounded-2 py-2" href="{{ rtrim(BASE_URL, '/') }}/adminsize/index">
+                                    <i class="bi bi-rulers me-2"></i>Size
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <!-- CÁC MENU KHÁC -->
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ BASE_URL }}/adminproduct/index">Sản phẩm</a>
+                        <a class="nav-link" href="{{ rtrim(BASE_URL, '/') }}/adminorder/index">
+                            <i class="bi bi-cart-check me-1"></i> Đơn hàng
+                        </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ BASE_URL }}/admincategory/index">Danh mục</a>
+                        <a class="nav-link" href="{{ rtrim(BASE_URL, '/') }}/adminuser/index">Thành viên</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ BASE_URL }}/adminbrand/index">Thương hiệu</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ BASE_URL }}/adminuser/index">Thành viên</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ BASE_URL }}/admincoupon/index">Coupon</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ BASE_URL }}/admincolor/index">Màu sắc</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ BASE_URL }}/adminsize/index">Size</a>
+                        <a class="nav-link" href="{{ rtrim(BASE_URL, '/') }}/admincoupon/index">Coupon</a>
                     </li>
                 </ul>
 
                 <ul class="navbar-nav ms-auto align-items-center">
                     <li class="nav-item me-3">
-                        <a class="btn btn-view-site px-3" href="{{ BASE_URL }}/home/index" target="_blank">
+                        <a class="btn btn-view-site px-3" href="{{ rtrim(BASE_URL, '/') }}/home/index" target="_blank">
                             <i class="bi bi-box-arrow-up-right me-1"></i>Xem Website
                         </a>
                     </li>
@@ -119,11 +164,9 @@
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end p-2">
                             <li><a class="dropdown-item py-2" href="#"><i class="bi bi-gear me-2"></i>Cấu hình</a></li>
+                            <li><hr class="dropdown-divider"></li>
                             <li>
-                                <hr class="dropdown-divider">
-                            </li>
-                            <li>
-                                <a class="dropdown-item text-danger fw-bold" href="{{ BASE_URL }}/adminauth/logout">
+                                <a class="dropdown-item text-danger fw-bold" href="{{ rtrim(BASE_URL, '/') }}/adminauth/logout">
                                     <i class="bi bi-box-arrow-right me-2"></i>Đăng xuất
                                 </a>
                             </li>
@@ -132,27 +175,26 @@
                 </ul>
             </div>
         </div>
-
-
     </nav>
 
-
+    <!-- Content Wrapper -->
     <div class="container py-5 flex-grow-1">
 
+        <!-- Hiển thị thông báo Success/Error toàn hệ thống -->
         @if(isset($_SESSION['success']))
-        <div class="alert alert-success border-0 shadow-sm mb-4 d-flex align-items-center">
-            <i class="bi bi-check-circle-fill me-2"></i>
-            <div>{{ $_SESSION['success'] }}</div>
-            <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert"></button>
+        <div class="alert alert-success border-0 shadow-sm mb-4 d-flex align-items-center animate-slide-down rounded-4 p-3">
+            <i class="bi bi-check-circle-fill me-2 fs-4"></i>
+            <div class="fw-bold">{{ $_SESSION['success'] }}</div>
+            <button type="button" class="btn-close ms-auto shadow-none" data-bs-dismiss="alert"></button>
             @php unset($_SESSION['success']) @endphp
         </div>
         @endif
 
         @if(isset($_SESSION['error']))
-        <div class="alert alert-danger border-0 shadow-sm mb-4 d-flex align-items-center">
-            <i class="bi bi-exclamation-triangle-fill me-2"></i>
-            <div>{{ $_SESSION['error'] }}</div>
-            <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert"></button>
+        <div class="alert alert-danger border-0 shadow-sm mb-4 d-flex align-items-center animate-slide-down rounded-4 p-3">
+            <i class="bi bi-exclamation-triangle-fill me-2 fs-4"></i>
+            <div class="fw-bold">{{ $_SESSION['error'] }}</div>
+            <button type="button" class="btn-close ms-auto shadow-none" data-bs-dismiss="alert"></button>
             @php unset($_SESSION['error']) @endphp
         </div>
         @endif

@@ -4,6 +4,7 @@ class Category extends Model {
     protected $table = 'category';
 
     public function list($page = 1, $limit = 8, $search = '') {
+        // Truyền mảng rỗng [] cho tham số filters để tránh lỗi Argument #5
         return $this->paginate($this->table, $page, $limit, $search, [], 'name');
     }
 

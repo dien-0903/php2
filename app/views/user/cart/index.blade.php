@@ -21,6 +21,7 @@
         </p>
     </div>
 
+    {{-- Hiển thị thông báo lỗi nếu có --}}
     @if(isset($_SESSION['error']))
         <div class="alert alert-danger border-0 shadow-sm rounded-4 mb-4 py-3 animate-slide-in">
             <div class="d-flex align-items-center fw-bold">
@@ -32,6 +33,7 @@
     @endif
 
     @if(empty($cart))
+        {{-- Giao diện khi giỏ hàng trống --}}
         <div class="bg-white p-5 rounded-5 shadow-sm text-center border border-slate-100 py-10">
             <div class="mb-4">
                 <i class="bi bi-bag-x text-slate-200" style="font-size: 6rem;"></i>
@@ -46,6 +48,7 @@
         </div>
     @else
         <div class="row g-4">
+            {{-- Danh sách sản phẩm --}}
             <div class="col-lg-8">
                 <div class="card border-0 shadow-sm rounded-4 overflow-hidden bg-white">
                     <div class="table-responsive">
@@ -61,14 +64,19 @@
                             </thead>
                             <tbody class="divide-y divide-slate-100">
                                 @foreach($cart as $key => $item)
+                                {{-- Lấy số lượng tồn kho, mặc định là 100 nếu không có dữ liệu --}}
+                                @php $currentStock = $item['stock'] ?? 100; @endphp
                                 <tr>
                                     <td class="ps-4 py-4">
                                         <div class="d-flex align-items-center">
                                             <div class="bg-slate-50 rounded-4 p-1 me-3 border border-slate-100 position-relative group" style="width: 85px; height: 85px;">
-                                                <img src="{{ $cleanBaseUrl }}/public/uploads/products/{{ $item['image'] ?: 'default.jpg' }}" 
-                                                     class="w-100 h-100 object-fit-contain transition-transform group-hover:scale-110" 
-                                                     alt="{{ $item['name'] }}"
-                                                     onerror="this.src='https://placehold.co/100x100?text=SP'">
+                                                 @php        
+                                                $APP_URL = 'http://localhost/PHP2';
+                                                $imagePath = $APP_URL . '/public/uploads/products/' . ($item['image'] ?: 'default.jpg');
+                                            @endphp
+                                            <img src="{{ $imagePath }}" 
+                                                 class="rounded shadow-sm border" width="75" height="75" style="object-fit: cover;"
+                                                 onerror="this.src='https://placehold.co/400x400?text=No+Image'">
                                             </div>
                                             <div>
                                                 <h6 class="mb-1 fw-bold text-dark fs-6">{{ $item['name'] }}</h6>
@@ -93,14 +101,31 @@
                                         {{ number_format($item['price'], 0, ',', '.') }}đ
                                     </td>
 
+                                    {{-- CỘT SỐ LƯỢNG ĐÃ ĐƯỢC CHỈNH SỬA --}}
                                     <td class="text-center">
                                         <form action="{{ $cleanBaseUrl }}/cart/updateQuantity" method="POST" class="d-inline-block">
                                             <input type="hidden" name="id" value="{{ $key }}">
                                             <div class="input-group input-group-sm border rounded-pill overflow-hidden shadow-sm bg-white" style="width: 100px; margin: 0 auto;">
                                                 <input type="number" name="quantity" 
                                                        class="form-control border-0 text-center fw-bold shadow-none py-2" 
-                                                       value="{{ $item['quantity'] }}" min="1" 
-                                                       onchange="this.form.submit()">
+                                                       value="{{ $item['quantity'] }}" 
+                                                       min="1" 
+                                                       max="{{ $currentStock }}"
+                                                       onchange="
+                                                           let maxStock = {{ $currentStock }};
+                                                           if(this.value > maxStock) {
+                                                               alert('Xin lỗi, sản phẩm này chỉ còn ' + maxStock + ' món trong kho!');
+                                                               this.value = maxStock;
+                                                           }
+                                                           if(this.value < 1) {
+                                                               this.value = 1;
+                                                           }
+                                                           this.form.submit();
+                                                       ">
+                                            </div>
+                                            {{-- Hiển thị tồn kho để user biết --}}
+                                            <div class="mt-1 extra-small text-muted fst-italic">
+                                                Kho: {{ $currentStock }}
                                             </div>
                                         </form>
                                     </td>
@@ -125,7 +150,7 @@
 
                     <div class="p-3 bg-slate-50 border-top d-flex justify-content-between align-items-center">
                         <a href="{{ $cleanBaseUrl }}/product/index" class="btn btn-link text-decoration-none text-slate-600 fw-bold small transition-all hover:text-primary">
-                            <i class="bi bi-arrow-left me-2"></i> TIẾP TỤC CHỌN SẢN PHẨM
+                            <i class="bi bi-arrow-left me-2"></i> TIẾP TỤC MUA SẮM
                         </a>
                         <a href="{{ $cleanBaseUrl }}/cart/clear" class="btn btn-link text-decoration-none text-danger fw-bold small" 
                            onclick="return confirm('Toàn bộ giỏ hàng sẽ bị xóa sạch, bạn chắc chứ?')">
@@ -135,6 +160,7 @@
                 </div>
             </div>
 
+            {{-- Cột bên phải: Coupon & Tổng tiền --}}
             <div class="col-lg-4 text-dark">
                 <div class="card border-0 shadow-sm rounded-4 mb-4 bg-white">
                     <div class="card-body p-4">

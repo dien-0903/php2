@@ -55,14 +55,14 @@
                     @forelse ($categories as $cat)
                     <tr>
                         <td class="ps-4">
-                            @php 
-                                $urlFix = rtrim(BASE_URL, '/');
-                                $urlFix = str_replace('/index.php', '', $urlFix);
-                                $imagePath = $urlFix . '/public/uploads/categories/' . ($cat['image'] ?: 'default.jpg');
-                            @endphp
-                            <img src="{{ $imagePath }}" 
-                                 class="rounded shadow-sm border" width="60" height="60" style="object-fit: cover;"
-                                 onerror="this.src='https://placehold.co/60x60?text=Cat'">
+                            @php
+                                             $APP_URL = 'http://localhost/PHP2';
+                                $imagePath = $APP_URL . '/public/uploads/categories/' . ($cat['image'] ?: 'default.jpg');
+                                        @endphp
+                                        <div class="avatar-wrapper rounded-3 border p-1 bg-white shadow-sm">
+                                            <img src="{{ $imagePath }}" class="rounded-2 object-fit-cover" width="50"
+                                                height="50" alt="{{ $cat['name'] }}"
+                                                onerror="this.src='https://placehold.co/50x50?text=N/A'">
                         </td>
                         <td>
                             <div class="fw-bold text-dark">{{ $cat['name'] }}</div>

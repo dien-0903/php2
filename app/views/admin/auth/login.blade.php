@@ -3,94 +3,114 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Login - MD</title>
+    <title>Đăng nhập quản trị - MD</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     <style>
-        body {
-            background-color: #0f172a;
-            height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-family: 'Inter', sans-serif;
-            margin: 0;
+        body { 
+            background-color: #f3f4f6; 
+            height: 100vh; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            font-family: 'Segoe UI', system-ui, sans-serif; 
         }
-        .login-card {
-            width: 100%;
-            max-width: 400px;
-            border-radius: 24px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-            overflow: hidden;
-            background: #1e293b;
+
+        .login-card { 
+            width: 100%; 
+            max-width: 420px; 
+            border: none; 
+            background: #ffffff; 
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08); 
+            border-radius: 16px; 
+            overflow: hidden; 
         }
-        .login-header {
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-            padding: 45px 20px;
-            text-align: center;
-            color: #fff;
+
+        /* Header đơn giản, icon tròn */
+        .login-header { 
+            padding: 40px 30px 10px; 
+            text-align: center; 
         }
-        .login-header i { font-size: 3.5rem; margin-bottom: 10px; display: block; }
-        .form-control {
-            background-color: #334155;
-            border: 1px solid #475569;
-            color: #f8fafc;
-            border-radius: 12px;
-            padding: 12px 15px;
-            transition: 0.3s;
+        
+        .icon-circle {
+            width: 70px; height: 70px;
+            background: #e0e7ff; color: #4f46e5;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 20px; font-size: 2rem;
         }
-        .form-control:focus {
-            background-color: #334155;
-            color: #fff;
-            box-shadow: 0 0 0 0.25rem rgba(16, 185, 129, 0.2);
-            border-color: #10b981;
+
+        /* Input sạch sẽ */
+        .form-control { 
+            background-color: #f8fafc; 
+            border: 1px solid #e2e8f0; 
+            color: #334155; 
+            border-radius: 8px; 
+            padding: 12px 14px; 
+            font-size: 0.95rem;
         }
-        .form-control::placeholder { color: #94a3b8; }
+        
+        .form-control:focus { 
+            background-color: #fff; 
+            border-color: #4f46e5; 
+            box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1); 
+        }
+
         .input-group-text {
-            background-color: #334155;
-            border: 1px solid #475569;
-            color: #94a3b8;
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-right: none;
+            color: #64748b;
+            border-top-left-radius: 8px;
+            border-bottom-left-radius: 8px;
         }
-        .btn-admin {
-            background-color: #10b981;
-            border: none;
-            border-radius: 12px;
-            padding: 12px;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+        
+        /* Fix border input khi dùng group */
+        .input-group .form-control { border-left: none; }
+
+        .btn-admin { 
+            background-color: #4f46e5; 
+            border: none; border-radius: 8px; 
+            padding: 12px; font-weight: 600; color: #fff; 
             transition: all 0.3s;
-            color: #fff;
         }
-        .btn-admin:hover {
-            background-color: #059669;
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(16, 185, 129, 0.3);
+        
+        .btn-admin:hover { 
+            background-color: #4338ca; 
+            transform: translateY(-1px); 
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
         }
-        .btn-admin:disabled { opacity: 0.7; transform: none; }
-        .text-muted { color: #94a3b8 !important; }
+
+        .text-label {
+            color: #64748b; font-size: 0.8rem; font-weight: 600; margin-bottom: 6px; display: block;
+        }
+
+        .link-forgot {
+            color: #4f46e5; font-size: 0.85rem; text-decoration: none; font-weight: 500;
+        }
+        .link-forgot:hover { text-decoration: underline; }
+
         .animate-shake { animation: shake 0.4s ease-in-out; }
         @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
-        .animate-slide-in { animation: slideIn 0.4s ease-out; }
-        @keyframes slideIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
 
 <div class="login-card">
     <div class="login-header">
-        <i class="bi bi-shield-lock-fill"></i>
-        <h3 class="fw-bold mb-0" style="letter-spacing: -1px;">HỆ THỐNG QUẢN TRỊ</h3>
-        <p class="small opacity-75 mt-1">MD Internal Control</p>
+        <div class="icon-circle">
+            <i class="bi bi-shield-lock"></i>
+        </div>
+        <h4 class="fw-bold text-dark mb-1">Quản trị hệ thống</h4>
+        <p class="text-muted small">Vui lòng đăng nhập để tiếp tục</p>
     </div>
 
-    <div class="card-body p-4 p-md-5">
-        <div id="auth-alert" class="alert d-none border-0 small mb-4 py-2 text-center rounded-3 animate-slide-in"></div>
+    <div class="card-body p-4 pt-2">
+        <div id="auth-alert" class="alert d-none border-0 small mb-4 py-2 text-center rounded-3"></div>
 
         <form id="adminLoginForm">
             <div class="mb-3">
-                <label class="form-label small fw-bold text-muted text-uppercase">Email Admin</label>
+                <label class="text-label">EMAIL</label>
                 <div class="input-group">
                     <span class="input-group-text"><i class="bi bi-envelope"></i></span>
                     <input type="email" name="email" class="form-control shadow-none" placeholder="admin@MD.vn" required>
@@ -98,9 +118,9 @@
             </div>
 
             <div class="mb-4">
-                <div class="d-flex justify-content-between">
-                    <label class="form-label small fw-bold text-muted text-uppercase">Mật khẩu</label>
-                    <a href="{{ BASE_URL }}/adminauth/forgot" class="small text-decoration-none" style="color: #10b981;">Quên mật khẩu?</a>
+                <div class="d-flex justify-content-between align-items-center mb-1">
+                    <label class="text-label mb-0">MẬT KHẨU</label>
+                    <a href="{{ BASE_URL }}/adminauth/forgot" class="link-forgot">Quên mật khẩu?</a>
                 </div>
                 <div class="input-group">
                     <span class="input-group-text"><i class="bi bi-key"></i></span>
@@ -108,59 +128,49 @@
                 </div>
             </div>
 
-            <button type="submit" id="submitBtn" class="btn btn-admin w-100 shadow-sm mb-3">
-                XÁC THỰC QUYỀN TRUY CẬP
+            <button type="submit" id="submitBtn" class="btn btn-admin w-100 mb-3">
+                ĐĂNG NHẬP
             </button>
+            
+            <div class="text-center mt-4 border-top pt-3">
+                <a href="{{ BASE_URL }}/" class="text-secondary text-decoration-none small fw-bold">
+                    <i class="bi bi-shop me-1"></i> Quay về trang chủ
+                </a>
+            </div>
         </form>
-    </div>
-
-    <div class="card-footer border-0 pb-4 text-center" style="background: transparent;">
-        <a href="{{ BASE_URL }}/" class="text-muted small text-decoration-none hover:text-white transition">
-            <i class="bi bi-house-door me-1"></i> Quay lại cửa hàng
-        </a>
     </div>
 </div>
 
 <script>
+/* Script giữ nguyên logic của bạn */
 document.getElementById('adminLoginForm').addEventListener('submit', async function(e) {
     e.preventDefault();
-    
     const btn = document.getElementById('submitBtn');
     const alertBox = document.getElementById('auth-alert');
     const formData = new FormData(this);
     
-    btn.disabled = true;
-    btn.innerText = 'ĐANG XÁC THỰC...';
-    alertBox.classList.add('d-none');
+    btn.disabled = true; btn.innerText = 'ĐANG XỬ LÝ...'; alertBox.classList.add('d-none');
 
     try {
-        const response = await fetch('{{ BASE_URL }}/adminauth/postLogin', {
-            method: 'POST',
-            body: formData
-        });
-
+        const response = await fetch('{{ BASE_URL }}/adminauth/postLogin', { method: 'POST', body: formData });
         const result = await response.json();
 
         if (result.success) {
-            alertBox.className = 'alert alert-success d-block border-0 bg-success bg-opacity-10 text-success';
+            alertBox.className = 'alert alert-success d-block bg-success-subtle text-success border-0';
             alertBox.innerText = result.message;
             setTimeout(() => window.location.href = result.redirect, 800);
         } else {
-            alertBox.className = 'alert alert-danger d-block border-0 bg-danger bg-opacity-10 text-danger animate-shake';
+            alertBox.className = 'alert alert-danger d-block bg-danger-subtle text-danger border-0 animate-shake';
             alertBox.innerText = result.message;
-            
-            btn.disabled = false;
-            btn.innerText = 'XÁC THỰC QUYỀN TRUY CẬP';
+            btn.disabled = false; btn.innerText = 'ĐĂNG NHẬP';
         }
     } catch (error) {
-        alertBox.className = 'alert alert-danger d-block border-0 bg-danger bg-opacity-10 text-danger';
+        alertBox.className = 'alert alert-danger d-block bg-danger-subtle text-danger border-0';
         alertBox.innerText = 'Lỗi kết nối hệ thống!';
-        btn.disabled = false;
-        btn.innerText = 'XÁC THỰC QUYỀN TRUY CẬP';
+        btn.disabled = false; btn.innerText = 'ĐĂNG NHẬP';
     }
 });
 </script>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

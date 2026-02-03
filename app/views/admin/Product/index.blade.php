@@ -1,7 +1,6 @@
 @include('admin.layouts.header')
 
 <div class="container mt-4 text-dark">
-    {{-- Hiển thị thông báo thành công --}}
     @if(isset($_SESSION['success']))
         <div class="alert alert-success border-0 shadow-sm mb-4 animate-slide-down rounded-4 d-flex align-items-center">
             <i class="bi bi-check-circle-fill me-2 fs-5"></i>
@@ -14,12 +13,12 @@
         <h2 class="mb-0 fw-bold uppercase tracking-tight">
             <i class="bi bi-box-seam text-primary me-2"></i>Quản lý Sản phẩm
         </h2>
-        <button class="btn btn-primary shadow-sm px-4 rounded-pill fw-bold" data-bs-toggle="modal" data-bs-target="#addProductModal">
+        <!-- Added type="button" to prevent form submission if inside one -->
+        <button type="button" class="btn btn-primary shadow-sm px-4 rounded-pill fw-bold" data-bs-toggle="modal" data-bs-target="#addProductModal">
             <i class="bi bi-plus-lg me-1"></i>Thêm sản phẩm mới
         </button>
     </div>
 
-    {{-- Thanh tìm kiếm --}}
     <div class="card p-3 mb-4 shadow-sm border-0 rounded-4 bg-white border border-slate-100">
         <form action="{{ rtrim(BASE_URL, '/') }}/adminproduct/index" method="GET" class="row g-2">
             <div class="col-md-5">
@@ -42,7 +41,6 @@
         </form>
     </div>
 
-    {{-- Bảng danh sách sản phẩm --}}
     <div class="card shadow-sm border-0 rounded-4 overflow-hidden bg-white border border-slate-50">
         <div class="table-responsive">
             <table class="table table-hover align-middle mb-0">
@@ -52,6 +50,7 @@
                         <th>Thông tin sản phẩm</th>
                         <th>Giá bán</th>
                         <th>Danh mục</th>
+                        <th>Tồn kho</th>
                         <th class="text-end pe-4">Thao tác</th>
                     </tr>
                 </thead>
@@ -59,10 +58,9 @@
                     @forelse ($products as $p)
                     <tr>
                         <td class="ps-4">
-                            @php 
-                                $urlFix = rtrim(BASE_URL, '/');
-                                $urlFix = str_replace('/index.php', '', $urlFix);
-                                $imagePath = $urlFix . '/public/uploads/products/' . ($p['image'] ?: 'default.jpg');
+                            @php        
+                                $APP_URL = 'http://localhost/PHP2';
+                                $imagePath = $APP_URL . '/public/uploads/products/' . ($p['image'] ?: 'default.jpg');
                             @endphp
                             <img src="{{ $imagePath }}" 
                                  class="rounded shadow-sm border" width="60" height="60" style="object-fit: cover;"
@@ -78,28 +76,47 @@
                         <td>
                             <span class="badge bg-info-subtle text-info border-0 px-3 rounded-pill fw-bold">{{ $p['category_name'] ?? 'N/A' }}</span>
                         </td>
+                        <td>
+                            <!-- Stock Column Logic Updated -->
+                            @php
+                                $stock = $p['stock'] ?? 0;
+                                if ($stock > 10) {
+                                    // Lớn hơn 10: Xanh lá
+                                    $badgeClass = 'bg-success-subtle text-success';
+                                } elseif ($stock > 0) {
+                                    // Từ 1 đến 10: Cam (Cảnh báo sắp hết)
+                                    $badgeClass = 'bg-warning-subtle text-warning';
+                                } else {
+                                    // Nhỏ hơn 1 (<= 0): Đỏ
+                                    $badgeClass = 'bg-danger-subtle text-danger';
+                                }
+                            @endphp
+                            <span class="badge {{ $badgeClass }} border-0 px-3 rounded-pill fw-bold">
+                                {{ $stock > 0 ? ($stock . ' SP') : 'Hết hàng' }}
+                            </span>
+                        </td>
                         <td class="text-end pe-4">
                             <div class="btn-group shadow-sm rounded-3 overflow-hidden">
-                                {{-- NÚT CẤU HÌNH BIẾN THỂ (MÀU/SIZE) --}}
                                 <a href="{{ rtrim(BASE_URL, '/') }}/adminvariant/index/{{ $p['id'] }}" 
                                    class="btn btn-sm btn-white border border-end-0 text-primary" 
                                    title="Cấu hình Màu sắc & Kích thước">
                                     <i class="bi bi-gear-wide-connected"></i>
                                 </a>
 
-                                {{-- NÚT CHỈNH SỬA --}}
-                                <button class="btn btn-sm btn-white border btn-edit-product"
+                                {{-- Edit Button --}}
+                                <button type="button" class="btn btn-sm btn-white border btn-edit-product"
                                     data-bs-toggle="modal" data-bs-target="#editProductModal"
                                     data-id="{{ $p['id'] }}"
                                     data-name="{{ htmlspecialchars($p['name']) }}"
                                     data-price="{{ $p['price'] }}"
                                     data-category="{{ $p['category_id'] }}"
                                     data-brand="{{ $p['brand_id'] }}"
+                                    data-description="{{ htmlspecialchars($p['description'] ?? '') }}"
+                                    data-stock="{{ $p['stock'] ?? 0 }}"
                                     data-image="{{ $p['image'] }}">
                                     <i class="bi bi-pencil-square text-warning"></i>
                                 </button>
 
-                                {{-- NÚT XÓA --}}
                                 <a href="{{ rtrim(BASE_URL, '/') }}/adminproduct/destroy/{{ $p['id'] }}" 
                                    class="btn btn-sm btn-white border text-danger" 
                                    onclick="return confirm('Xác nhận xóa sản phẩm {{ $p['name'] }}?')">
@@ -110,7 +127,7 @@
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="5" class="text-center p-5 text-muted italic">Không tìm thấy sản phẩm nào phù hợp.</td>
+                        <td colspan="6" class="text-center p-5 text-muted italic">Không tìm thấy sản phẩm nào phù hợp.</td>
                     </tr>
                     @endforelse
                 </tbody>
@@ -118,7 +135,6 @@
         </div>
     </div>
 
-    {{-- Phân trang --}}
     @if (isset($totalPages) && $totalPages > 1)
     <nav class="mt-4 mb-5">
         <ul class="pagination justify-content-center gap-2">
@@ -135,8 +151,8 @@
     @endif
 </div>
 
-@include('admin.Product.them')
-@include('admin.Product.edit')
+@include('admin.product.them')
+@include('admin.product.edit')
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
@@ -157,6 +173,13 @@
                 document.getElementById('edit_price').value = this.dataset.price;
                 document.getElementById('edit_category_id').value = this.dataset.category;
                 document.getElementById('edit_brand_id').value = this.dataset.brand;
+                
+                // Populate Stock and Description
+                const stockInput = document.getElementById('edit_stock');
+                if(stockInput) stockInput.value = this.dataset.stock;
+
+                const descInput = document.getElementById('edit_description');
+                if(descInput) descInput.value = this.dataset.description;
 
                 const img = this.dataset.image;
                 if (imgPreview) {

@@ -37,7 +37,9 @@ class AdminBrandController extends AdminController {
 
             $logoName = 'default.jpg';
             if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
-                $uploaded = $this->uploadFile($_FILES['image']);
+                // SỬ DỤNG HÀM CHUNG TỪ ADMIN CONTROLLER
+                // Tham số thứ 2 là tên folder: 'brands'
+                $uploaded = $this->uploadFile($_FILES['image'], 'brands');
                 if ($uploaded) {
                     $logoName = $uploaded;
                 } else {
@@ -85,7 +87,8 @@ class AdminBrandController extends AdminController {
 
             $logoName = $current['image'];
             if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
-                $uploaded = $this->uploadFile($_FILES['image']);
+                // SỬ DỤNG HÀM CHUNG TỪ ADMIN CONTROLLER
+                $uploaded = $this->uploadFile($_FILES['image'], 'brands');
                 if ($uploaded) {
                     $logoName = $uploaded;
                 }
@@ -126,25 +129,5 @@ class AdminBrandController extends AdminController {
         $this->redirect('adminbrand/index');
     }
 
-    private function uploadFile($file) {
-        $targetDir = BASE_PATH . DIRECTORY_SEPARATOR . 'public' . DIRECTORY_SEPARATOR . 'uploads' . DIRECTORY_SEPARATOR . 'brands' . DIRECTORY_SEPARATOR;
-        
-        if (!file_exists($targetDir)) {
-            if (!mkdir($targetDir, 0777, true)) {
-                return null; 
-            }
-        }
-
-        $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
-        $allowed = ['jpg', 'jpeg', 'png', 'webp', 'svg'];
-
-        if (in_array($ext, $allowed)) {
-            $fileName = "brand_" . time() . "_" . uniqid() . "." . $ext;
-            
-            if (move_uploaded_file($file['tmp_name'], $targetDir . $fileName)) {
-                return $fileName; 
-            }
-        }
-        return null;
-    }
+    // ĐÃ XÓA hàm uploadFile() private tại đây
 }

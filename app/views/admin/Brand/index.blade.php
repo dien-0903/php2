@@ -48,9 +48,8 @@
                 
                 <div class="bg-light p-4 d-flex flex-column align-items-center justify-content-center aspect-square position-relative" style="height: 200px;">
                     @php 
-                        $urlFix = rtrim(BASE_URL, '/');
-                        $urlFix = str_replace('/index.php', '', $urlFix);
-                        $imagePath = $urlFix . '/public/uploads/brands/' . ($b['image'] ?: 'default.jpg');
+                       $APP_URL = 'http://localhost/PHP2';
+                                $imagePath = $APP_URL . '/public/uploads/brands/' . ($b['image'] ?: 'default.jpg');
                     @endphp
 
                     <img src="{{ $imagePath }}" 

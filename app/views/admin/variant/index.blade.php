@@ -49,9 +49,13 @@
                                 @forelse($variants as $v)
                                 <tr>
                                     <td class="ps-4">
-                                        <img src="{{ BASE_URL }}/public/uploads/products/{{ $v['image'] ?: 'default.jpg' }}" 
-                                             class="rounded-3 border shadow-sm" width="55" height="55" style="object-fit: cover;"
-                                             onerror="this.src='https://placehold.co/100x100?text=No+Img'">
+                                        @php        
+                                $APP_URL = 'http://localhost/PHP2';
+                                $imagePath = $APP_URL . '/public/uploads/products/' . ($v['image'] ?: 'default.jpg');
+                            @endphp
+                            <img src="{{ $imagePath }}" 
+                                 class="rounded shadow-sm border" width="60" height="60" style="object-fit: cover;"
+                                 onerror="this.src='https://placehold.co/100x100?text=SP'">
                                     </td>
                                     <td>
                                         <div class="fw-bold text-dark fs-6">{{ $v['color_name'] ?: 'Tiêu chuẩn' }}</div>

@@ -47,27 +47,57 @@ class AdminVariantController extends AdminController {
     public function store() {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $productId = $_POST['product_id'];
-            
+            $colorId   = $_POST['color_id'] ?: null;
+            $sizeId    = $_POST['size_id'] ?: null;
+            $sku       = trim($_POST['sku']);
+            $variantModel = $this->model('ProductVariant');
+
+            // --- 1. KIỂM TRA TRÙNG MÃ SKU ---
+            $checkSku = $variantModel->query("SELECT id FROM product_variants WHERE sku = ?", [$sku])->fetch();
+            if ($checkSku) {
+                $_SESSION['error'] = "Lỗi: Mã SKU '$sku' đã tồn tại trong hệ thống. Vui lòng chọn mã khác!";
+                session_write_close();
+                $this->redirect('adminvariant/index/' . $productId);
+                return; 
+            }
+
+            // --- 2. KIỂM TRA TRÙNG CẶP (MÀU + SIZE) ---
+            $checkExists = $variantModel->query(
+                "SELECT id FROM product_variants 
+                 WHERE product_id = ? AND color_id <=> ? AND size_id <=> ?", 
+                [$productId, $colorId, $sizeId]
+            )->fetch();
+
+            if ($checkExists) {
+                $_SESSION['error'] = "Lỗi: Biến thể với Màu và Size này đã tồn tại cho sản phẩm hiện tại!";
+                session_write_close();
+                $this->redirect('adminvariant/index/' . $productId);
+                return;
+            }
+
+            // --- XỬ LÝ ẢNH VÀ THÊM MỚI ---
             $imageName = 'default.jpg';
             if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
-                $imageName = $this->uploadImage($_FILES['image']);
+                // DÙNG HÀM CHUNG: lưu vào public/uploads/products/
+                $uploaded = $this->uploadFile($_FILES['image'], 'products');
+                if ($uploaded) $imageName = $uploaded;
             }
 
             $data = [
                 'product_id' => $productId,
-                'color_id'   => $_POST['color_id'] ?: null,
-                'size_id'    => $_POST['size_id'] ?: null,
-                'sku'        => trim($_POST['sku']),
+                'color_id'   => $colorId,
+                'size_id'    => $sizeId,
+                'sku'        => $sku,
                 'price'      => (float)$_POST['price'],
                 'stock'      => (int)$_POST['stock'],
                 'image'      => $imageName
             ];
 
             try {
-                $this->model('ProductVariant')->create($data);
+                $variantModel->create($data);
                 $_SESSION['success'] = "Đã niêm yết biến thể mới thành công!";
             } catch (Exception $e) {
-                $_SESSION['error'] = "Lỗi: Mã SKU bị trùng hoặc dữ liệu không hợp lệ!";
+                $_SESSION['error'] = "Lỗi hệ thống: " . $e->getMessage();
             }
 
             session_write_close();
@@ -78,13 +108,46 @@ class AdminVariantController extends AdminController {
     public function update($id) {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $productId = $_POST['product_id'];
+            $colorId   = $_POST['color_id'] ?: null;
+            $sizeId    = $_POST['size_id'] ?: null;
+            $sku       = trim($_POST['sku']);
             $variantModel = $this->model('ProductVariant');
 
+            // --- 1. KIỂM TRA TRÙNG MÃ SKU (TRỪ CHÍNH NÓ) ---
+            $checkSku = $variantModel->query(
+                "SELECT id FROM product_variants WHERE sku = ? AND id != ?", 
+                [$sku, $id]
+            )->fetch();
+
+            if ($checkSku) {
+                $_SESSION['error'] = "Lỗi: Mã SKU '$sku' đã được sử dụng bởi một biến thể khác!";
+                session_write_close();
+                $this->redirect('adminvariant/index/' . $productId);
+                return;
+            }
+
+            // --- 2. KIỂM TRA TRÙNG MÀU + SIZE (TRỪ CHÍNH NÓ) ---
+            $checkExists = $variantModel->query(
+                "SELECT id FROM product_variants 
+                 WHERE product_id = ? AND color_id <=> ? AND size_id <=> ? AND id != ?", 
+                [$productId, $colorId, $sizeId, $id]
+            )->fetch();
+
+            if ($checkExists) {
+                $_SESSION['error'] = "Lỗi: Đã có một biến thể khác trùng Màu và Size này trong sản phẩm!";
+                session_write_close();
+                $this->redirect('adminvariant/index/' . $productId);
+                return;
+            }
+
+            // --- XỬ LÝ ẢNH VÀ UPDATE ---
             $oldData = $variantModel->query("SELECT image FROM product_variants WHERE id = ?", [$id])->fetch();
             $imageName = $oldData['image'] ?? 'default.jpg';
 
             if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
-                $imageName = $this->uploadImage($_FILES['image']);
+                // DÙNG HÀM CHUNG
+                $uploaded = $this->uploadFile($_FILES['image'], 'products');
+                if ($uploaded) $imageName = $uploaded;
             }
 
             $sql = "UPDATE product_variants SET 
@@ -100,16 +163,16 @@ class AdminVariantController extends AdminController {
             try {
                 $variantModel->query($sql, [
                     'id'       => $id,
-                    'color_id' => $_POST['color_id'] ?: null,
-                    'size_id'  => $_POST['size_id'] ?: null,
-                    'sku'      => trim($_POST['sku']),
+                    'color_id' => $colorId,
+                    'size_id'  => $sizeId,
+                    'sku'      => $sku,
                     'price'    => (float)$_POST['price'],
                     'stock'    => (int)$_POST['stock'],
                     'image'    => $imageName
                 ]);
                 $_SESSION['success'] = "Đã cập nhật thông tin biến thể!";
             } catch (Exception $e) {
-                $_SESSION['error'] = "Lỗi cập nhật: Vui lòng kiểm tra lại mã SKU!";
+                $_SESSION['error'] = "Lỗi cập nhật: " . $e->getMessage();
             }
 
             session_write_close();
@@ -124,13 +187,5 @@ class AdminVariantController extends AdminController {
         $this->redirect('adminvariant/index/' . $productId);
     }
 
-    private function uploadImage($file) {
-        $targetDir = BASE_PATH . "/public/uploads/products/";
-        if (!file_exists($targetDir)) mkdir($targetDir, 0777, true);
-        
-        $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
-        $fileName = "var_" . time() . "_" . uniqid() . "." . $ext;
-        move_uploaded_file($file['tmp_name'], $targetDir . $fileName);
-        return $fileName;
-    }
+    // ĐÃ XÓA hàm uploadImage() private để dùng chung hàm uploadFile của Cha
 }

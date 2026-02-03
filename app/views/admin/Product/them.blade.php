@@ -19,19 +19,23 @@
                 @endif
 
                 <div class="row mb-3">
-                    <div class="col-md-8">
-                        <label class="form-label fw-bold small">TÊN SẢN PHẨM</label>
-                        <input type="text" name="name" class="form-control rounded-3 shadow-none" placeholder="Nhập tên sản phẩm công nghệ..." required>
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold small text-secondary">TÊN SẢN PHẨM</label>
+                        <input type="text" name="name" class="form-control rounded-3 shadow-none" placeholder="Nhập tên sản phẩm..." required>
                     </div>
-                    <div class="col-md-4">
-                        <label class="form-label fw-bold small">GIÁ BÁN (VNĐ)</label>
-                        <input type="number" name="price" class="form-control rounded-3 shadow-none" min="0" placeholder="Ví dụ: 15000000" required>
+                    <div class="col-md-3">
+                        <label class="form-label fw-bold small text-secondary">GIÁ BÁN (VNĐ)</label>
+                        <input type="number" name="price" class="form-control rounded-3 shadow-none" min="0" placeholder="0" required>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label fw-bold small text-secondary">TỒN KHO</label>
+                        <input type="number" name="stock" class="form-control rounded-3 shadow-none" min="0" value="0">
                     </div>
                 </div>
 
                 <div class="row mb-3">
                     <div class="col-md-6">
-                        <label class="form-label fw-bold small">DANH MỤC</label>
+                        <label class="form-label fw-bold small text-secondary">DANH MỤC</label>
                         <select name="category_id" class="form-select rounded-3 shadow-none" required>
                             <option value="">-- Chọn danh mục --</option>
                             @if(!empty($all_categories))
@@ -42,7 +46,7 @@
                         </select>
                     </div>
                     <div class="col-md-6">
-                        <label class="form-label fw-bold small">THƯƠNG HIỆU</label>
+                        <label class="form-label fw-bold small text-secondary">THƯƠNG HIỆU</label>
                         <select name="brand_id" class="form-select rounded-3 shadow-none" required>
                             <option value="">-- Chọn thương hiệu --</option>
                             @if(!empty($all_brands))
@@ -53,23 +57,31 @@
                         </select>
                     </div>
                 </div>
-                <div class="mb-0">
-                    <label class="form-label fw-bold small">HÌNH ẢNH ĐẠI DIỆN</label>
-                    <div class="input-group">
-                        <span class="input-group-text bg-light rounded-start-3 border-end-0"><i class="bi bi-image"></i></span>
-                        <input type="file" name="image" class="form-control rounded-end-3 shadow-none" accept="image/*">
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold small text-secondary">MÔ TẢ CHI TIẾT</label>
+                    <textarea name="description" class="form-control rounded-3 shadow-none" rows="3" placeholder="Thông số kỹ thuật..."></textarea>
+                </div>
+
+                <div class="row mb-0">
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold small text-secondary">ẢNH ĐẠI DIỆN</label>
+                        <input type="file" name="image" class="form-control rounded-3 mb-2" accept="image/*" onchange="previewMainImage(this, 'add_img_preview')">
+                        <div class="text-center bg-light rounded-3 p-2 border">
+                            <img id="add_img_preview" src="https://placehold.co/200x200?text=Preview" class="img-fluid rounded" style="max-height: 150px;">
+                        </div>
                     </div>
-                    <div class="form-text mt-2 text-muted">
-                        <i class="bi bi-info-circle me-1"></i> Định dạng hỗ trợ: JPG, PNG, WebP. Tối đa 2MB.
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold small text-secondary">THƯ VIỆN ẢNH (CHỌN NHIỀU)</label>
+                        <input type="file" name="gallery[]" class="form-control rounded-3" accept="image/*" multiple>
+                        <div class="form-text mt-2 small text-muted">Giữ phím Ctrl để chọn nhiều ảnh cùng lúc.</div>
                     </div>
                 </div>
             </div>
 
             <div class="modal-footer border-0 p-4 pt-0">
                 <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Hủy bỏ</button>
-                <button type="submit" class="btn btn-primary rounded-pill px-4 fw-bold shadow-sm">
-                    Lưu sản phẩm
-                </button>
+                <button type="submit" class="btn btn-primary rounded-pill px-4 fw-bold shadow-sm">Lưu sản phẩm</button>
             </div>
         </form>
     </div>

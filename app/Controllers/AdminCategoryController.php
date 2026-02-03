@@ -38,7 +38,9 @@ class AdminCategoryController extends AdminController {
 
             $imageName = 'default.jpg';
             if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
-                $uploaded = $this->uploadFile($_FILES['image']);
+                // SỬ DỤNG HÀM TỪ ADMIN CONTROLLER (Class Cha)
+                // Tham số 'categories' để lưu vào thư mục public/uploads/categories/
+                $uploaded = $this->uploadFile($_FILES['image'], 'categories');
                 if ($uploaded) {
                     $imageName = $uploaded;
                 }
@@ -88,7 +90,8 @@ class AdminCategoryController extends AdminController {
 
             $imageName = $current['image'];
             if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
-                $uploaded = $this->uploadFile($_FILES['image']);
+                // SỬ DỤNG HÀM TỪ ADMIN CONTROLLER
+                $uploaded = $this->uploadFile($_FILES['image'], 'categories');
                 if ($uploaded) {
                     $imageName = $uploaded;
                 }
@@ -124,22 +127,5 @@ class AdminCategoryController extends AdminController {
         $this->redirect('admincategory/index');
     }
 
-    private function uploadFile($file) {
-        $targetDir = BASE_PATH . DIRECTORY_SEPARATOR . 'public' . DIRECTORY_SEPARATOR . 'uploads' . DIRECTORY_SEPARATOR . 'categories' . DIRECTORY_SEPARATOR;
-        
-        if (!file_exists($targetDir)) {
-            mkdir($targetDir, 0777, true);
-        }
-
-        $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
-        $allowed = ['jpg', 'jpeg', 'png', 'webp'];
-
-        if (in_array($ext, $allowed)) {
-            $fileName = "cat_" . time() . "_" . uniqid() . "." . $ext;
-            if (move_uploaded_file($file['tmp_name'], $targetDir . $fileName)) {
-                return $fileName;
-            }
-        }
-        return null;
-    }
+    // ĐÃ XÓA hàm uploadFile() private tại đây
 }
