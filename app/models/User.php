@@ -39,11 +39,7 @@ class User extends Model {
         ]);
     }
 
-    /**
-     * FIX: Cập nhật hàm update để lưu được phone
-     */
     public function update($id, $data) {
-        // Lấy dữ liệu cũ để tránh làm mất các trường không truyền vào $data
         $currentUser = $this->show($id);
 
         $sql = "UPDATE {$this->table} SET 

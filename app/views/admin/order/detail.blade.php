@@ -21,7 +21,6 @@
     @endif
 
     <div class="row g-4">
-        <!-- BÊN TRÁI: THÔNG TIN SẢN PHẨM -->
         <div class="col-lg-8">
             <div class="card border-0 shadow-sm rounded-4 overflow-hidden bg-white mb-4">
                 <div class="card-header bg-white border-bottom py-3 px-4">
@@ -90,7 +89,6 @@
             </div>
         </div>
 
-        <!-- BÊN PHẢI: TRẠNG THÁI & NGƯỜI NHẬN -->
         <div class="col-lg-4">
             <div class="card border-0 shadow-sm rounded-4 bg-white mb-4">
                 <div class="card-header bg-primary text-white py-3 px-4 rounded-top-4">

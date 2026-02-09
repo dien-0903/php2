@@ -7,7 +7,6 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     <style>
-        /* Thay đổi font và nền chính */
         body { 
             background-color: #f3f4f6; 
             height: 100vh; 
@@ -17,7 +16,6 @@
             font-family: 'Segoe UI', system-ui, sans-serif; 
         }
 
-        /* Card trắng sạch sẽ */
         .auth-card { 
             width: 100%; 
             max-width: 420px; 
@@ -28,7 +26,6 @@
             overflow: hidden; 
         }
 
-        /* Header đơn giản hơn */
         .auth-header { 
             background: #fff; 
             padding: 40px 30px 10px 30px; 
@@ -49,7 +46,6 @@
             font-size: 2rem;
         }
 
-        /* Input hiện đại */
         .form-control { 
             background-color: #f8fafc; 
             border: 1px solid #e2e8f0; 
@@ -66,7 +62,6 @@
             color: #0f172a;
         }
 
-        /* Nút bấm màu Indigo */
         .btn-reset { 
             background-color: #4f46e5; 
             border: none; 

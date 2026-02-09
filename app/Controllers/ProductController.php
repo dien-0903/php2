@@ -11,32 +11,26 @@ class ProductController extends Controller {
         $search = $_GET['search'] ?? '';
         $sort   = $_GET['sort'] ?? 'newest';
         $categoryId = $_GET['category'] ?? '';
-        
         $minPrice = isset($_GET['min_price']) && is_numeric($_GET['min_price']) ? (int)$_GET['min_price'] : 0;
         $maxPrice = isset($_GET['max_price']) && is_numeric($_GET['max_price']) ? (int)$_GET['max_price'] : 0;
         
         $page   = isset($_GET['page']) ? (int)$_GET['page'] : 1;
         $limit  = 9; 
-
         $result = $productModel->list($page, $limit, $search, $sort, $categoryId, $minPrice, $maxPrice);
 
-        $categories = $categoryModel->getAll(); 
-
-        // Lấy danh sách ID sản phẩm yêu thích từ Session
-        $wishlist = $_SESSION['wishlist'] ?? [];
-
         $this->view('user.product.index', [
-            'title'       => 'Sản phẩm - MD',
+            'title'       => 'Sản phẩm MD - Bộ lọc thông minh',
             'products'    => $result['data'] ?? [],
             'totalPages'  => $result['totalPages'] ?? 0,
             'currentPage' => $page,
             'search'      => $search,
             'sort'        => $sort,
             'currentCat'  => $categoryId,
-            'categories'  => $categories,
+            'categories'  => $categoryModel->getAll(),
             'minPrice'    => $minPrice,
             'maxPrice'    => $maxPrice,
-            'wishlist'    => $wishlist // Truyền mảng wishlist xuống view
+            'totalRecords' => $result['totalRecords'] ?? 0,
+            'wishlist'    => $_SESSION['wishlist'] ?? []
         ]);
     }
 
@@ -58,7 +52,6 @@ class ProductController extends Controller {
             return;
         }
 
-        // --- MỚI: Lấy thêm ảnh thư viện (Gallery) để hiện lên giao diện ---
         $product['gallery'] = $this->model('Model')->query(
             "SELECT id, image FROM product_images WHERE product_id = ?", 
             [$id]

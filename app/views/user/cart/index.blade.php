@@ -21,7 +21,6 @@
         </p>
     </div>
 
-    {{-- Hiển thị thông báo lỗi nếu có --}}
     @if(isset($_SESSION['error']))
         <div class="alert alert-danger border-0 shadow-sm rounded-4 mb-4 py-3 animate-slide-in">
             <div class="d-flex align-items-center fw-bold">
@@ -33,7 +32,6 @@
     @endif
 
     @if(empty($cart))
-        {{-- Giao diện khi giỏ hàng trống --}}
         <div class="bg-white p-5 rounded-5 shadow-sm text-center border border-slate-100 py-10">
             <div class="mb-4">
                 <i class="bi bi-bag-x text-slate-200" style="font-size: 6rem;"></i>
@@ -48,7 +46,6 @@
         </div>
     @else
         <div class="row g-4">
-            {{-- Danh sách sản phẩm --}}
             <div class="col-lg-8">
                 <div class="card border-0 shadow-sm rounded-4 overflow-hidden bg-white">
                     <div class="table-responsive">
@@ -64,7 +61,6 @@
                             </thead>
                             <tbody class="divide-y divide-slate-100">
                                 @foreach($cart as $key => $item)
-                                {{-- Lấy số lượng tồn kho, mặc định là 100 nếu không có dữ liệu --}}
                                 @php $currentStock = $item['stock'] ?? 100; @endphp
                                 <tr>
                                     <td class="ps-4 py-4">
@@ -101,7 +97,6 @@
                                         {{ number_format($item['price'], 0, ',', '.') }}đ
                                     </td>
 
-                                    {{-- CỘT SỐ LƯỢNG ĐÃ ĐƯỢC CHỈNH SỬA --}}
                                     <td class="text-center">
                                         <form action="{{ $cleanBaseUrl }}/cart/updateQuantity" method="POST" class="d-inline-block">
                                             <input type="hidden" name="id" value="{{ $key }}">
@@ -123,7 +118,6 @@
                                                            this.form.submit();
                                                        ">
                                             </div>
-                                            {{-- Hiển thị tồn kho để user biết --}}
                                             <div class="mt-1 extra-small text-muted fst-italic">
                                                 Kho: {{ $currentStock }}
                                             </div>
@@ -160,7 +154,6 @@
                 </div>
             </div>
 
-            {{-- Cột bên phải: Coupon & Tổng tiền --}}
             <div class="col-lg-4 text-dark">
                 <div class="card border-0 shadow-sm rounded-4 mb-4 bg-white">
                     <div class="card-body p-4">
@@ -231,22 +224,5 @@
     @endif
 </div>
 
-<style>
-    .fw-black { font-weight: 900; }
-    .extra-small { font-size: 10px; }
-    .object-fit-contain { object-fit: contain; }
-    .tracking-tighter { letter-spacing: -1.5px; }
-    
-    .animate-slide-in { animation: slideIn 0.4s ease-out; }
-    @keyframes slideIn { from { transform: translateY(-10px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-    
-    .animate-fade-in { animation: fadeIn 0.5s ease; }
-    @keyframes fadeIn { from { opacity: 0; opacity: 1; } }
-
-    .group:hover img { transform: scale(1.1); }
-    
-    input[type=number]::-webkit-inner-spin-button, 
-    input[type=number]::-webkit-outer-spin-button { opacity: 1; }
-</style>
 
 @include('user.layouts.footer')

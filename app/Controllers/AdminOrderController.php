@@ -2,25 +2,18 @@
 
 class AdminOrderController extends AdminController {
 
-    /**
-     * Hiển thị danh sách đơn hàng dành cho Admin
-     * Hỗ trợ: Phân trang, Tìm kiếm mã đơn/tên khách, Lọc trạng thái
-     */
     public function index() {
-        // 1. Tiếp nhận các tham số lọc từ URL (GET)
         $status = isset($_GET['status']) && $_GET['status'] !== '' ? $_GET['status'] : null;
         $search = $_GET['search'] ?? '';
         $page   = isset($_GET['page']) ? (int)$_GET['page'] : 1;
         if ($page < 1) $page = 1;
         
-        $limit  = 10; // Số lượng đơn hàng hiển thị trên mỗi trang
+        $limit  = 10; 
 
         $orderModel = $this->model('Order');
 
-        // 2. Gọi hàm phân trang đã định nghĩa trong Model
         $result = $orderModel->paginateAllOrders($page, $limit, $status, $search);
 
-        // 3. Trả về view kèm các dữ liệu cần thiết
         $this->view('admin.order.index', [
             'title'       => 'Quản lý Đơn hàng',
             'orders'      => $result['data'],
@@ -32,10 +25,38 @@ class AdminOrderController extends AdminController {
         ]);
     }
 
-    /**
-     * Hiển thị chi tiết một đơn hàng
-     * @param int $id ID của đơn hàng
-     */
+    public function statistics() {
+        $orderModel = $this->model('Order');
+        
+        $overview = $orderModel->getRevenueStats();
+        $dbData = $orderModel->getRevenueLast7Days();
+        $topProducts = $orderModel->getTopSellingProducts();
+
+        $chartData = [];
+        for ($i = 6; $i >= 0; $i--) {
+            $date = date('Y-m-d', strtotime("-$i days"));
+            $found = false;
+            
+            foreach ($dbData as $row) {
+                if ($row['date'] == $date) {
+                    $chartData[] = $row;
+                    $found = true;
+                    break;
+                }
+            }
+            
+            if (!$found) {
+                $chartData[] = ['date' => $date, 'revenue' => 0];
+            }
+        }
+
+        $this->view('admin.order.statistics', [
+            'title'       => 'Thống kê doanh thu',
+            'overview'    => $overview,
+            'chartData'   => $chartData, 
+            'topProducts' => $topProducts
+        ]);
+    }
     public function show($id = null) {
         if (!$id) {
             $this->redirect('adminorder/index');
@@ -51,7 +72,6 @@ class AdminOrderController extends AdminController {
             return;
         }
 
-        // Lấy danh sách sản phẩm khách đã mua trong đơn này
         $items = $orderModel->getOrderItems($id);
 
         $this->view('admin.order.detail', [
@@ -61,26 +81,17 @@ class AdminOrderController extends AdminController {
         ]);
     }
 
-    /**
-     * Xử lý cập nhật trạng thái đơn hàng
-     * Hỗ trợ cả Request thông thường và AJAX (không load lại trang)
-     */
     public function updateStatus() {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $id = $_POST['order_id'];
             $status = $_POST['status'];
 
-            // Kiểm tra xem đây có phải là yêu cầu AJAX không
             $isAjax = !empty($_SERVER['HTTP_X_REQUESTED_WITH']) && 
                       strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest';
 
             try {
                 $orderModel = $this->model('Order');
-                
-                /**
-                 * Gọi hàm updateStatus trong Model.
-                 * Hàm này (như đã viết trong Model) sẽ tự động cộng lại tồn kho nếu đơn bị Hủy (status = 4)
-                 */
+
                 $orderModel->updateStatus($id, $status);
 
                 if ($isAjax) {

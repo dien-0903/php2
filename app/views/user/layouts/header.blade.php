@@ -80,7 +80,6 @@
             </ul>
 
             <ul class="navbar-nav ms-auto align-items-center">
-                <!-- GIỎ HÀNG -->
                 <li class="nav-item me-3">
                     <a class="nav-link position-relative d-inline-block px-3" href="{{ rtrim(BASE_URL, '/') }}/cart/index">
                         <i class="bi bi-cart3 fs-5"></i>
@@ -115,7 +114,7 @@
                                 </a>
                             </li>
                             <li>
-                                <a class="dropdown-item" href="{{ rtrim(BASE_URL, '/') }}/user/address">
+                                <a class="dropdown-item" href="{{ rtrim(BASE_URL, '/') }}/address/index">
                                     <i class="bi bi-geo-alt me-2"></i>Sổ địa chỉ
                                 </a>
                             </li>
@@ -143,7 +142,6 @@
 </nav>
 
 <div class="container py-5 flex-grow-1">
-    <!-- Hiển thị thông báo Success/Error -->
     @if(isset($_SESSION['success']))
         <div class="alert alert-success border-0 shadow-sm mb-4 d-flex align-items-center animate-slide-down rounded-4 p-3">
             <i class="bi bi-check-circle-fill me-2 fs-4"></i>

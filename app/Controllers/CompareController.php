@@ -8,10 +8,8 @@ class CompareController extends Controller {
         $compareIds = $_SESSION['compare'] ?? [];
         $products = [];
 
-        // Logic cũ bị comment, giờ đã mở ra để gọi hàm getByIds
         if (!empty($compareIds)) {
             $productModel = $this->model('Product');
-            // Kiểm tra và gọi hàm getByIds
             if (method_exists($productModel, 'getByIds')) {
                 $products = $productModel->getByIds($compareIds);
             }

@@ -52,7 +52,6 @@ class AdminVariantController extends AdminController {
             $sku       = trim($_POST['sku']);
             $variantModel = $this->model('ProductVariant');
 
-            // --- 1. KIỂM TRA TRÙNG MÃ SKU ---
             $checkSku = $variantModel->query("SELECT id FROM product_variants WHERE sku = ?", [$sku])->fetch();
             if ($checkSku) {
                 $_SESSION['error'] = "Lỗi: Mã SKU '$sku' đã tồn tại trong hệ thống. Vui lòng chọn mã khác!";
@@ -61,7 +60,6 @@ class AdminVariantController extends AdminController {
                 return; 
             }
 
-            // --- 2. KIỂM TRA TRÙNG CẶP (MÀU + SIZE) ---
             $checkExists = $variantModel->query(
                 "SELECT id FROM product_variants 
                  WHERE product_id = ? AND color_id <=> ? AND size_id <=> ?", 
@@ -75,10 +73,8 @@ class AdminVariantController extends AdminController {
                 return;
             }
 
-            // --- XỬ LÝ ẢNH VÀ THÊM MỚI ---
             $imageName = 'default.jpg';
             if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
-                // DÙNG HÀM CHUNG: lưu vào public/uploads/products/
                 $uploaded = $this->uploadFile($_FILES['image'], 'products');
                 if ($uploaded) $imageName = $uploaded;
             }
@@ -113,7 +109,6 @@ class AdminVariantController extends AdminController {
             $sku       = trim($_POST['sku']);
             $variantModel = $this->model('ProductVariant');
 
-            // --- 1. KIỂM TRA TRÙNG MÃ SKU (TRỪ CHÍNH NÓ) ---
             $checkSku = $variantModel->query(
                 "SELECT id FROM product_variants WHERE sku = ? AND id != ?", 
                 [$sku, $id]
@@ -126,7 +121,6 @@ class AdminVariantController extends AdminController {
                 return;
             }
 
-            // --- 2. KIỂM TRA TRÙNG MÀU + SIZE (TRỪ CHÍNH NÓ) ---
             $checkExists = $variantModel->query(
                 "SELECT id FROM product_variants 
                  WHERE product_id = ? AND color_id <=> ? AND size_id <=> ? AND id != ?", 
@@ -140,12 +134,10 @@ class AdminVariantController extends AdminController {
                 return;
             }
 
-            // --- XỬ LÝ ẢNH VÀ UPDATE ---
             $oldData = $variantModel->query("SELECT image FROM product_variants WHERE id = ?", [$id])->fetch();
             $imageName = $oldData['image'] ?? 'default.jpg';
 
             if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
-                // DÙNG HÀM CHUNG
                 $uploaded = $this->uploadFile($_FILES['image'], 'products');
                 if ($uploaded) $imageName = $uploaded;
             }
@@ -187,5 +179,4 @@ class AdminVariantController extends AdminController {
         $this->redirect('adminvariant/index/' . $productId);
     }
 
-    // ĐÃ XÓA hàm uploadImage() private để dùng chung hàm uploadFile của Cha
 }

@@ -42,7 +42,6 @@ class WishlistController extends Controller {
             $_SESSION['error'] = $message;
         }
 
-        // Xử lý AJAX
         if ($this->isAjax()) {
             echo json_encode(['success' => $status, 'message' => $message, 'action' => 'add']);
             exit;
@@ -60,7 +59,6 @@ class WishlistController extends Controller {
         if (isset($_SESSION['wishlist'])) {
             if (($key = array_search($id, $_SESSION['wishlist'])) !== false) {
                 unset($_SESSION['wishlist'][$key]);
-                // Sắp xếp lại mảng session để tránh lỗi index
                 $_SESSION['wishlist'] = array_values($_SESSION['wishlist']);
                 
                 $message = "Đã xóa khỏi danh sách yêu thích!";
@@ -69,13 +67,11 @@ class WishlistController extends Controller {
             }
         }
 
-        // Xử lý AJAX (JS gọi)
         if ($this->isAjax()) {
             echo json_encode(['success' => $success, 'message' => $message, 'action' => 'remove']);
             exit;
         }
 
-        // Xử lý Link thường: Quay lại trang trước đó thay vì trang Wishlist
         header("Location: " . ($_SERVER['HTTP_REFERER'] ?? BASE_URL . '/product/index'));
     }
 

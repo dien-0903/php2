@@ -6,15 +6,10 @@ class CartController extends Controller {
         if (session_status() === PHP_SESSION_NONE) session_start();
     }
 
-    /**
-     * Hiển thị giỏ hàng và đồng bộ tồn kho
-     */
     public function index() {
         $cart = $_SESSION['cart'] ?? [];
         $productModel = $this->model('Product');
         $baseModel = $this->model('Model'); 
-
-        // Cập nhật tồn kho mới nhất từ Database
         foreach ($cart as $key => &$item) {
             $currentStock = 0;
             if (isset($item['variant_id']) && $item['variant_id'] > 0) {
@@ -25,8 +20,6 @@ class CartController extends Controller {
                 if ($prod) $currentStock = $prod['stock'];
             }
             $item['stock'] = (int)$currentStock;
-            
-            // Nếu số lượng trong giỏ > kho, tự động giảm xuống
             if ($item['quantity'] > $item['stock']) {
                 $item['quantity'] = $item['stock'];
             }
@@ -54,14 +47,10 @@ class CartController extends Controller {
         ]);
     }
 
-    /**
-     * FIX LỖI 404: Thêm sản phẩm vào giỏ hàng
-     */
     public function add($productId, $variantId = null) {
         $productModel = $this->model('Product');
         $baseModel = $this->model('Model');
         
-        // 1. Lấy thông tin sản phẩm/biến thể
         if ($variantId) {
             $data = $baseModel->query("SELECT p.name, p.image, pv.price, pv.stock 
                                      FROM product_variants pv 
@@ -79,12 +68,10 @@ class CartController extends Controller {
             return;
         }
 
-        // 2. Tạo key duy nhất cho sản phẩm/biến thể trong giỏ
         $key = $productId . ($variantId ? '_' . $variantId : '');
         
         if (!isset($_SESSION['cart'])) $_SESSION['cart'] = [];
 
-        // 3. Kiểm tra tồn kho trước khi thêm
         $currentInCart = $_SESSION['cart'][$key]['quantity'] ?? 0;
         if ($currentInCart + 1 > $data['stock']) {
             $_SESSION['error'] = "Sản phẩm này chỉ còn " . $data['stock'] . " món trong kho!";

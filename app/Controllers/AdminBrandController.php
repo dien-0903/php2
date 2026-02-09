@@ -37,8 +37,6 @@ class AdminBrandController extends AdminController {
 
             $logoName = 'default.jpg';
             if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
-                // SỬ DỤNG HÀM CHUNG TỪ ADMIN CONTROLLER
-                // Tham số thứ 2 là tên folder: 'brands'
                 $uploaded = $this->uploadFile($_FILES['image'], 'brands');
                 if ($uploaded) {
                     $logoName = $uploaded;
@@ -87,7 +85,6 @@ class AdminBrandController extends AdminController {
 
             $logoName = $current['image'];
             if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
-                // SỬ DỤNG HÀM CHUNG TỪ ADMIN CONTROLLER
                 $uploaded = $this->uploadFile($_FILES['image'], 'brands');
                 if ($uploaded) {
                     $logoName = $uploaded;
@@ -129,5 +126,4 @@ class AdminBrandController extends AdminController {
         $this->redirect('adminbrand/index');
     }
 
-    // ĐÃ XÓA hàm uploadFile() private tại đây
 }

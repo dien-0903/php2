@@ -1,10 +1,8 @@
 @php
     if (session_status() === PHP_SESSION_NONE) session_start();
     
-    // Khởi tạo các biến để tránh lỗi Undefined variable
     $cart = $_SESSION['cart'] ?? [];
     
-    // 1. Tính toán Tạm tính (Subtotal) nếu chưa có
     if (!isset($subtotal)) {
         $subtotal = 0;
         foreach ($cart as $item) {
@@ -12,7 +10,6 @@
         }
     }
 
-    // 2. Tính toán Giảm giá (Discount) và lấy Coupon nếu chưa có
     if (!isset($coupon)) {
         $coupon = $_SESSION['coupon'] ?? null;
     }
@@ -25,7 +22,6 @@
         }
     }
 
-    // 3. Tính tổng thanh toán cuối cùng
     if (!isset($total)) {
         $total = $subtotal - $discount;
         if ($total < 0) $total = 0;
@@ -39,7 +35,6 @@
 
     <form action="{{ BASE_URL }}/order/placeOrder" method="POST" id="checkoutForm">
         <div class="row g-4">
-            <!-- Cột trái: Thông tin nhận hàng -->
             <div class="col-lg-7">
                 <div class="card border-0 shadow-sm rounded-4 p-4 bg-white mb-4">
                     <h5 class="fw-bold mb-4 border-start border-4 border-primary ps-3 text-start">THÔNG TIN GIAO HÀNG</h5>
@@ -72,7 +67,6 @@
                         </div>
                     @endif
 
-                    <!-- Form nhập thông tin -->
                     <div id="recipient-info-box">
                         <div class="row">
                             <div class="col-md-6 mb-3 text-start">
@@ -109,7 +103,6 @@
                     </div>
                 </div>
 
-                <!-- KHU VỰC MÃ GIẢM GIÁ TRONG CHECKOUT -->
                 <div class="card border-0 shadow-sm rounded-4 p-4 bg-white text-start">
                     <h5 class="fw-bold mb-3 border-start border-4 border-success ps-3 uppercase small">Ưu đãi giảm giá</h5>
                     @if(isset($coupon))
@@ -130,7 +123,6 @@
                 </div>
             </div>
 
-            <!-- Cột phải: Tóm tắt đơn hàng -->
             <div class="col-lg-5">
                 <div class="card border-0 shadow-sm rounded-4 p-4 bg-white sticky-top text-start" style="top: 100px;">
                     <h5 class="fw-bold mb-4 border-start border-4 border-danger ps-3">TÓM TẮT ĐƠN HÀNG</h5>
@@ -193,7 +185,6 @@
         </div>
     </form>
 
-    <!-- FORM ẨN ĐỂ XỬ LÝ MGG -->
     <form id="couponForm" action="{{ BASE_URL }}/cart/applyCoupon" method="POST" class="d-none"></form>
 </div>
 
@@ -209,7 +200,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const wardSelect = document.getElementById('ward');
     const streetInput = document.getElementById('street');
 
-    // Tải danh sách Tỉnh/Thành
     fetch('https://provinces.open-api.vn/api/p/')
         .then(res => res.json())
         .then(data => data.forEach(p => {
@@ -266,16 +256,5 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 </script>
-
-<style>
-    .fw-black { font-weight: 900; }
-    .extra-small { font-size: 11px; }
-    .uppercase { text-transform: uppercase; letter-spacing: 1px; }
-    .cursor-pointer { cursor: pointer; }
-    .btn-check:checked + label { border-color: #0d6efd !important; background-color: #f0f7ff !important; box-shadow: 0 4px 12px rgba(13, 110, 253, 0.1) !important; }
-    .animate-fade-in { animation: fadeIn 0.5s ease; }
-    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-    .bg-success-subtle { background-color: #e6ffed !important; }
-</style>
 
 @include('user.layouts.footer')

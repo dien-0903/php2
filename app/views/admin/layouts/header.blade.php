@@ -77,7 +77,6 @@
             color: #10b981;
         }
 
-        /* Tiện ích bổ sung */
         .uppercase { text-transform: uppercase; }
         .animate-slide-down { animation: slideDown 0.4s ease-out; }
         @keyframes slideDown { 
@@ -92,7 +91,6 @@
 
     <nav class="navbar navbar-expand-lg navbar-dark navbar-admin sticky-top shadow-sm">
         <div class="container">
-            <!-- Logo -->
             <a class="navbar-brand fw-bold fs-4 d-flex align-items-center" href="{{ rtrim(BASE_URL, '/') }}/adminproduct/index">
                 <i class="bi bi-shield-lock-fill me-2"></i>ADMIN MD
             </a>
@@ -103,7 +101,9 @@
 
             <div class="collapse navbar-collapse" id="adminMenu">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
-                    <!-- MENU SẢN PHẨM DROPDOWN -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ rtrim(BASE_URL, '/') }}/adminorder/statistics">Doanh thu</a>
+                    </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             Sản phẩm
@@ -138,7 +138,6 @@
                         </ul>
                     </li>
 
-                    <!-- CÁC MENU KHÁC -->
                     <li class="nav-item">
                         <a class="nav-link" href="{{ rtrim(BASE_URL, '/') }}/adminorder/index">
                             <i class="bi bi-cart-check me-1"></i> Đơn hàng
@@ -177,10 +176,8 @@
         </div>
     </nav>
 
-    <!-- Content Wrapper -->
     <div class="container py-5 flex-grow-1">
 
-        <!-- Hiển thị thông báo Success/Error toàn hệ thống -->
         @if(isset($_SESSION['success']))
         <div class="alert alert-success border-0 shadow-sm mb-4 d-flex align-items-center animate-slide-down rounded-4 p-3">
             <i class="bi bi-check-circle-fill me-2 fs-4"></i>

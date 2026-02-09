@@ -3,25 +3,18 @@
         session_start();
     }
 
-    // --- LOGIC TỰ ĐỘNG NHẬN DIỆN URL (SỬA LỖI 404 & ẢNH) ---
-    // 1. Lấy Protocol & Host
     $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
     $host = $_SERVER['HTTP_HOST'];
     
-    // 2. Lấy đường dẫn thư mục gốc
     $scriptDir = str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME'])); 
-    $projectPath = str_replace('/public', '', $scriptDir); // Loại bỏ /public
-    $projectPath = rtrim($projectPath, '/'); // Loại bỏ dấu / thừa ở cuối
-    
-    // 3. Tạo URL chuẩn (Dùng chung cho cả Link và Ảnh)
+    $projectPath = str_replace('/public', '', $scriptDir); 
+    $projectPath = rtrim($projectPath, '/'); 
     $baseUrl = $protocol . $host . $projectPath;
 @endphp
 
 @include('user.layouts.header')
 
 <div class="container py-4 font-inter text-dark">
-    
-    {{-- PHẦN THÔNG BÁO TỪ PHP (Load lại trang) --}}
     @if(isset($_SESSION['success']))
         <div class="alert alert-success alert-dismissible fade show border-0 shadow-sm rounded-4 py-3 px-4 mb-4 animate-bounce-in">
             <div class="d-flex align-items-center text-success fw-bold">
@@ -33,8 +26,6 @@
         @php unset($_SESSION['success']) @endphp
     @endif
 
-    {{-- PHẦN THÔNG BÁO TỪ JAVASCRIPT (AJAX - Yêu thích) --}}
-    {{-- Đây là nơi thông báo yêu thích sẽ xuất hiện giống hệt thông báo trên --}}
     <div id="js-alert-container"></div>
 
     <nav aria-label="breadcrumb" class="mb-4">
@@ -45,7 +36,6 @@
     </nav>
 
     <div class="row">
-        <!-- Sidebar Filter -->
         <div class="col-lg-3 mb-4">
             <div class="card border-0 shadow-sm rounded-4 p-4 sticky-top" style="top: 100px;">
                 <form action="{{ $baseUrl }}/product/index" method="GET">
@@ -100,7 +90,6 @@
             </div>
         </div>
 
-        <!-- Product List -->
         <div class="col-lg-9">
             <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3 bg-white p-3 rounded-4 shadow-sm border border-slate-50">
                 <div>
@@ -133,7 +122,6 @@
                     @foreach($products as $item)
                         @php 
                             $inWishlist = in_array($item['id'], $wishlist ?? []);
-                            // Giả sử trường 'stock' tồn tại trong database
                             $isOutOfStock = isset($item['stock']) && $item['stock'] <= 0; 
                         @endphp
                         <div class="col-6 col-md-4">
@@ -157,7 +145,6 @@
                                     <div class="bg-white p-3 d-flex align-items-center justify-content-center relative overflow-hidden" style="height: 220px;">
                                         @php $APP_URL = 'http://localhost/PHP2'; $imagePath = $APP_URL . '/public/uploads/products/' . ($item['image'] ?: 'default.jpg'); @endphp
                                         
-                                        {{-- --- LOGIC ẢNH KHI HẾT HÀNG --- --}}
                                         <img src="{{ $imagePath }}" 
                                              class="img-fluid transition-transform group-hover:scale-105" 
                                              style="max-height: 100%; width: auto; object-fit: contain; {{ $isOutOfStock ? 'filter: grayscale(100%); opacity: 0.6;' : '' }}"
@@ -181,9 +168,7 @@
                                     <div class="mt-1 d-flex justify-content-between align-items-end">
                                         <span class="text-danger font-black fs-5 mb-0 fw-bold">{{ number_format($item['price'], 0, ',', '.') }}đ</span>
                                         
-                                        {{-- --- LOGIC NÚT MUA HÀNG --- --}}
                                         @if($isOutOfStock)
-                                            <!-- Nút Disabled khi hết hàng -->
                                             <button type="button" 
                                                 class="btn btn-secondary rounded-circle p-0 d-flex align-items-center justify-content-center shadow-sm" 
                                                 style="width: 35px; height: 35px; cursor: not-allowed; opacity: 0.5; background-color: #e2e8f0; border: none;" 
@@ -191,7 +176,6 @@
                                                 <i class="bi bi-x-lg text-secondary"></i>
                                             </button>
                                         @else
-                                            <!-- Nút Thêm vào giỏ bình thường -->
                                             <a href="{{ $baseUrl }}/cart/add/{{ $item['id'] }}" 
                                                class="btn btn-primary rounded-circle p-0 d-flex align-items-center justify-content-center shadow-sm hover:bg-blue-700 transition-all btn-ajax-action" 
                                                data-type="cart" style="width: 35px; height: 35px;" title="Thêm vào giỏ hàng">
@@ -236,7 +220,6 @@
     </div>
 </div>
 
-{{-- Đã xóa phần Toast cũ, thay bằng logic chèn Alert vào #js-alert-container --}}
 
 <script>
     function toggleCategories() {
@@ -251,7 +234,6 @@
     }
 
     document.addEventListener('DOMContentLoaded', function() {
-        // Lấy container để chèn Alert
         const alertContainer = document.getElementById('js-alert-container');
 
         document.querySelectorAll('.btn-ajax-action').forEach(btn => {
@@ -268,7 +250,6 @@
                     currentBtn.style.opacity = '1';
                     if(data.success) {
                         
-                        // --- TẠO THÔNG BÁO ALERT (Thay thế Toast) ---
                         const alertHtml = `
                             <div class="alert alert-success alert-dismissible fade show border-0 shadow-sm rounded-4 py-3 px-4 mb-4 animate-bounce-in">
                                 <div class="d-flex align-items-center text-success fw-bold">
@@ -278,13 +259,8 @@
                                 <button type="button" class="btn-close shadow-none" data-bs-dismiss="alert"></button>
                             </div>
                         `;
-                        // Chèn vào container
                         alertContainer.innerHTML = alertHtml;
-                        
-                        // Tự động cuộn lên đầu trang để người dùng thấy thông báo (nếu cần)
-                        // window.scrollTo({ top: 0, behavior: 'smooth' });
-
-                        // --- Xử lý đổi icon nút yêu thích ---
+                    
                         if(type === 'wishlist') {
                             const icon = currentBtn.querySelector('i');
                             const action = currentBtn.dataset.action;
@@ -304,7 +280,6 @@
                             }
                         }
                     } else {
-                        // Hiển thị alert lỗi (màu đỏ)
                         const errorHtml = `
                             <div class="alert alert-danger alert-dismissible fade show border-0 shadow-sm rounded-4 py-3 px-4 mb-4 animate-bounce-in">
                                 <div class="d-flex align-items-center text-danger fw-bold">
@@ -319,21 +294,11 @@
                 })
                 .catch(err => { 
                     console.error(err); 
-                    // Fallback: Chuyển trang nếu lỗi AJAX
                     window.location.href = url;
                 });
             });
         });
     });
 </script>
-
-<style>
-    .font-inter { font-family: 'Inter', sans-serif; }
-    .line-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-    @keyframes bounceIn { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
-    .animate-bounce-in { animation: bounceIn 0.5s ease-out; }
-    .hover-shadow-xl:hover { box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04) !important; transform: translateY(-3px); }
-    .transition-all { transition: all 0.3s ease; }
-</style>
 
 @include('user.layouts.footer')

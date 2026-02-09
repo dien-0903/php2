@@ -2,10 +2,35 @@
 
 class Order extends Model {
     protected $table = 'orders';
+    
+    public function getRevenueStats() {
+        $sql = "SELECT 
+                    SUM(CASE WHEN status = 3 THEN total_amount ELSE 0 END) as total_revenue,
+                    COUNT(id) as total_orders,
+                    SUM(CASE WHEN status = 0 THEN 1 ELSE 0 END) as pending_count,
+                    SUM(CASE WHEN status = 4 THEN 1 ELSE 0 END) as canceled_count
+                FROM {$this->table}";
+        return $this->query($sql)->fetch();
+    }
 
-    /**
-     * DÀNH CHO ADMIN: Lấy toàn bộ đơn hàng kèm tên khách hàng
-     */
+    public function getRevenueLast7Days() {
+        $sql = "SELECT DATE(created_at) as date, SUM(total_amount) as revenue 
+                FROM {$this->table} 
+                WHERE status = 3 AND created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)
+                GROUP BY DATE(created_at) 
+                ORDER BY date ASC";
+        return $this->query($sql)->fetchAll();
+    }
+
+    public function getTopSellingProducts($limit = 5) {
+        $sql = "SELECT product_name, SUM(quantity) as total_qty, SUM(quantity * price) as total_money
+                FROM order_items
+                GROUP BY product_id, product_name
+                ORDER BY total_qty DESC
+                LIMIT $limit";
+        return $this->query($sql)->fetchAll();
+    }
+
     public function getAllOrders($status = null, $search = '') {
         $sql = "SELECT o.*, u.fullname as user_name 
                 FROM {$this->table} o 
@@ -28,9 +53,6 @@ class Order extends Model {
         return $this->query($sql, $params)->fetchAll();
     }
 
-    /**
-     * DÀNH CHO ADMIN: Phân trang danh sách đơn hàng
-     */
     public function paginateAllOrders($page = 1, $limit = 5, $status = null, $search = '') {
         $offset = ($page - 1) * $limit;
         $params = [];
@@ -62,41 +84,32 @@ class Order extends Model {
         return ['data' => $data, 'totalPages' => $totalPages, 'totalCount' => $totalCount];
     }
 
-    /**
-     * HÀM QUAN TRỌNG: Cập nhật trạng thái kèm HOÀN TỒN KHO nếu hủy đơn
-     */
     public function updateStatus($id, $newStatus) {
         try {
             $this->db->beginTransaction();
 
-            // 1. Lấy trạng thái hiện tại của đơn hàng
             $order = $this->show($id);
             if (!$order) throw new Exception("Đơn hàng không tồn tại!");
             
             $oldStatus = (int)$order['status'];
             $newStatus = (int)$newStatus;
 
-            // 2. Logic hoàn kho: Nếu trạng thái chuyển sang Hủy (4) và trước đó chưa phải là Hủy
             if ($newStatus === 4 && $oldStatus !== 4) {
                 $items = $this->getOrderItems($id);
                 foreach ($items as $item) {
                     $qty = (int)$item['quantity'];
                     if (!empty($item['variant_id'])) {
-                        // Cộng lại vào biến thể
                         $this->query("UPDATE product_variants SET stock = stock + ? WHERE id = ?", [$qty, $item['variant_id']]);
                     } else {
-                        // Cộng lại vào sản phẩm thường
                         $this->query("UPDATE products SET stock = stock + ? WHERE id = ?", [$qty, $item['product_id']]);
                     }
                 }
             }
             
-            // Logic trừ kho lại: Nếu admin lỡ tay hủy rồi muốn "Khôi phục" lại đơn hàng
             if ($oldStatus === 4 && $newStatus !== 4) {
                  $items = $this->getOrderItems($id);
                  foreach ($items as $item) {
                     $qty = (int)$item['quantity'];
-                    // Kiểm tra xem kho còn đủ để khôi phục không
                     if (!empty($item['variant_id'])) {
                         $check = $this->query("SELECT stock FROM product_variants WHERE id = ?", [$item['variant_id']])->fetch();
                         if ($check['stock'] < $qty) throw new Exception("Không đủ hàng trong kho để khôi phục đơn hàng!");
@@ -109,7 +122,6 @@ class Order extends Model {
                  }
             }
 
-            // 3. Cập nhật trạng thái đơn hàng
             $sql = "UPDATE {$this->table} SET status = ?, updated_at = NOW() WHERE id = ?";
             $this->query($sql, [$newStatus, $id]);
 

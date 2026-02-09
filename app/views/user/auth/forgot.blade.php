@@ -130,13 +130,5 @@ document.getElementById('forgotForm').addEventListener('submit', async function(
 });
 </script>
 
-<style>
-    body { background-color: #0f172a !important; }
-    .animate-shake { animation: shake 0.4s ease-in-out; }
-    @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
-    .animate-slide-in { animation: slideIn 0.4s ease-out; }
-    @keyframes slideIn { from { transform: translateY(-10px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-    .btn-reset:hover { background-color: #d97706 !important; transform: translateY(-2px); }
-</style>
 
 @include('user.layouts.footer')

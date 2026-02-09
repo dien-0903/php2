@@ -1,4 +1,3 @@
-<!-- Modal Sửa User -->
 <div class="modal fade" id="editUserModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content border-0 shadow-lg rounded-4">
@@ -8,7 +7,6 @@
                 </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <!-- Action form sẽ được JS cập nhật -->
             <form id="editUserForm" method="POST">
                 <div class="modal-body p-4">
                     <div class="mb-3">

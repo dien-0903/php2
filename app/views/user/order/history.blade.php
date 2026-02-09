@@ -1,7 +1,6 @@
 @include('user.layouts.header')
 
 <div class="container py-5 text-dark mb-5 animate-fade-in text-start">
-    <!-- Tiêu đề trang -->
     <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
         <div>
             <h2 class="fw-black mb-0 uppercase tracking-tighter text-primary">
@@ -14,11 +13,9 @@
         </a>
     </div>
 
-    <!-- THANH TÌM KIẾM & LỌC (THIẾT KẾ CHUẨN THEO ẢNH) -->
     <div class="card border-0 shadow-sm rounded-4 mb-5 bg-white border border-slate-100 overflow-hidden">
         <div class="card-body p-4 p-md-5">
             <form action="{{ rtrim(BASE_URL, '/') }}/order/history" method="GET" class="row g-4 align-items-end">
-                <!-- Bộ chọn Trạng thái -->
                 <div class="col-md-3">
                     <label class="form-label extra-small fw-bold text-muted uppercase tracking-wider mb-2 ms-2">TRẠNG THÁI</label>
                     <div class="rounded-pill border px-2 bg-light">
@@ -33,7 +30,6 @@
                     </div>
                 </div>
 
-                <!-- Ô Tìm kiếm -->
                 <div class="col-md-5">
                     <label class="form-label extra-small fw-bold text-muted uppercase tracking-wider mb-2 ms-2">TÌM KIẾM</label>
                     <div class="input-group rounded-pill border overflow-hidden bg-light">
@@ -45,7 +41,6 @@
                     </div>
                 </div>
 
-                <!-- Các Nút Hành Động -->
                 <div class="col-md-4">
                     <div class="d-flex gap-2">
                         <button type="submit" class="btn btn-dark w-100 rounded-pill fw-bold py-2.5 shadow-sm transition-all hover-lift uppercase">
@@ -60,7 +55,6 @@
         </div>
     </div>
 
-    <!-- THÔNG BÁO HỆ THỐNG -->
     @if(isset($_SESSION['success']))
         <div class="alert alert-success border-0 shadow-sm rounded-4 mb-4 d-flex align-items-center p-3 animate-slide-down">
             <div class="bg-success text-white rounded-circle p-1 me-3 d-flex align-items-center justify-content-center" style="width: 28px; height: 28px;">
@@ -71,12 +65,10 @@
         </div>
     @endif
 
-    <!-- DANH SÁCH ĐƠN HÀNG -->
     <div class="row g-4">
         <div class="col-lg-12">
             @forelse($orders as $o)
             <div class="card border-0 shadow-sm rounded-4 mb-4 overflow-hidden bg-white hover-shadow-lg transition-all border border-slate-100">
-                <!-- Header Đơn hàng -->
                 <div class="card-header bg-white border-bottom p-3 d-flex flex-wrap justify-content-between align-items-center gap-2">
                     <div class="d-flex align-items-center flex-wrap gap-2">
                         <span class="badge bg-dark text-white rounded-pill px-3 py-2 extra-small fw-bold">#{{ $o['order_code'] }}</span>
@@ -103,7 +95,6 @@
                     </div>
                 </div>
 
-                <!-- Body Đơn hàng -->
                 <div class="card-body p-4">
                     <div class="row g-4 align-items-center">
                         <div class="col-md-7">
@@ -137,7 +128,6 @@
                     </div>
                 </div>
 
-                <!-- Footer Đơn hàng -->
                 <div class="card-footer bg-slate-50 border-0 p-3 text-end d-flex flex-wrap justify-content-end gap-2">
                     <div class="me-auto d-none d-md-block pt-1">
                         <span class="extra-small text-muted italic">Cần hỗ trợ? <a href="#" class="text-primary text-decoration-none fw-bold">MD Support</a></span>
@@ -172,7 +162,6 @@
         </div>
     </div>
 
-    <!-- PHÂN TRANG (PAGINATION) -->
     @if(isset($totalPages) && $totalPages > 1)
     <nav class="mt-5">
         <ul class="pagination justify-content-center gap-2">
@@ -202,30 +191,5 @@
     </nav>
     @endif
 </div>
-
-<style>
-    .fw-black { font-weight: 900; }
-    .extra-small { font-size: 10px; }
-    .uppercase { text-transform: uppercase; letter-spacing: 0.5px; }
-    .tracking-tighter { letter-spacing: -1.5px; }
-    .bg-slate-50 { background-color: #f8fafc; }
-    .hover-shadow-lg:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(0,0,0,0.08) !important; }
-    .hover-lift:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
-    .transition-all { transition: all 0.3s ease; }
-    .animate-slide-down { animation: slideDown 0.4s ease-out; }
-    @keyframes slideDown { from { transform: translateY(-10px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-    
-    /* Màu trạng thái */
-    .bg-warning-subtle { background-color: #fff9db !important; color: #f59f00 !important; }
-    .bg-info-subtle { background-color: #e7f5ff !important; color: #1c7ed6 !important; }
-    .bg-primary-subtle { background-color: #e7f5ff !important; color: #339af0 !important; }
-    .bg-success-subtle { background-color: #ebfbee !important; color: #37b24d !important; }
-    .bg-danger-subtle { background-color: #fff5f5 !important; color: #f03e3e !important; }
-
-    @media (min-width: 768px) {
-        .border-start-md { border-left: 1px solid #f1f5f9 !important; }
-    }
-    .shadow-primary { box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25); }
-</style>
 
 @include('user.layouts.footer')

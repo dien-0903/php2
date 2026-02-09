@@ -2,12 +2,10 @@
 
 <div class="container py-5 text-dark min-vh-100">
     <div class="row g-4">
-        <!-- SIDEBAR ĐIỀU HƯỚNG -->
         <div class="col-lg-3">
             <div class="card border-0 shadow-sm rounded-4 p-3 bg-white animate-slide-down">
                 <div class="text-center mb-4 pt-3">
                     <div class="position-relative d-inline-block mb-3">
-                        <!-- Hiển thị ảnh đại diện -->
                         @php
                             $avatarPath = !empty($user['avatar']) 
                                 ? rtrim(BASE_URL, '/') . '/public/uploads/users/' . $user['avatar'] 
@@ -17,7 +15,6 @@
                              class="rounded-circle border border-4 border-light shadow-sm" 
                              width="120" height="120" style="object-fit: cover;" alt="Avatar">
                         
-                        <!-- Nút thay đổi ảnh nhanh (Label trỏ vào input file ẩn bên dưới) -->
                         <label for="avatar-input" class="position-absolute bottom-0 end-0 bg-primary text-white rounded-circle p-2 cursor-pointer shadow-sm border border-2 border-white" title="Đổi ảnh đại diện">
                             <i class="bi bi-camera-fill" style="font-size: 0.8rem;"></i>
                         </label>
@@ -47,9 +44,7 @@
             </div>
         </div>
 
-        <!-- NỘI DUNG CHÍNH -->
         <div class="col-lg-9">
-            <!-- PHẦN 1: THÔNG TIN CÁ NHÂN & SĐT -->
             <div class="card border-0 shadow-sm rounded-4 p-4 bg-white mb-4 transition-all">
                 <div class="d-flex align-items-center mb-4">
                     <div class="bg-primary text-white rounded-3 p-2 me-3 shadow-sm">
@@ -58,9 +53,7 @@
                     <h5 class="fw-black mb-0 uppercase tracking-tight">Thông tin tài khoản</h5>
                 </div>
                 
-                <!-- Form cập nhật cần có enctype để upload file -->
                 <form action="{{ rtrim(BASE_URL, '/') }}/user/updateProfile" method="POST" enctype="multipart/form-data">
-                    <!-- Input chọn ảnh ẩn -->
                     <input type="file" name="avatar" id="avatar-input" class="d-none" accept="image/*" onchange="previewAvatar(this)">
                     
                     <div class="row g-3">
@@ -94,7 +87,6 @@
                 </form>
             </div>
 
-            <!-- PHẦN 2: THAY ĐỔI MẬT KHẨU -->
             <div class="card border-0 shadow-sm rounded-4 p-4 bg-white shadow-hover">
                 <div class="d-flex align-items-center mb-4">
                     <div class="bg-warning text-dark rounded-3 p-2 me-3 shadow-sm">
@@ -156,16 +148,13 @@
     .extra-small { font-size: 10px; }
     .cursor-pointer { cursor: pointer; }
     
-    /* SIDEBAR */
     .list-group-item { transition: 0.2s; font-size: 0.9rem; font-weight: 500; color: #64748b; }
     .list-group-item:hover { background-color: #f8fafc; color: #2563eb; padding-left: 25px !important; }
     .list-group-item.active { background-color: #2563eb !important; border-color: #2563eb !important; color: #fff !important; }
     
-    /* FORMS */
     .bg-light { background-color: #f1f5f9 !important; }
     .focus-ring:focus { background-color: #fff !important; border: 1px solid #2563eb !important; box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1) !important; }
     
-    /* ANIMATIONS */
     .animate-slide-down { animation: slideDown 0.5s ease-out; }
     @keyframes slideDown { 
         from { transform: translateY(-15px); opacity: 0; } 
@@ -175,23 +164,16 @@
 </style>
 
 <script>
-    /**
-     * Hàm xem trước ảnh khi người dùng chọn file
-     */
     function previewAvatar(input) {
         if (input.files && input.files[0]) {
             const reader = new FileReader();
             reader.onload = function(e) {
-                // Cập nhật cả ảnh ở sidebar
                 document.getElementById('sidebar-avatar-preview').src = e.target.result;
             }
             reader.readAsDataURL(input.files[0]);
         }
     }
 
-    /**
-     * Logic ẩn hiện mật khẩu
-     */
     document.addEventListener('DOMContentLoaded', function() {
         const toggleBtns = document.querySelectorAll('.toggle-password-btn');
         

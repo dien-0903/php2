@@ -26,7 +26,6 @@
             overflow: hidden; 
         }
 
-        /* Header đơn giản, icon tròn */
         .login-header { 
             padding: 40px 30px 10px; 
             text-align: center; 
@@ -40,7 +39,6 @@
             margin: 0 auto 20px; font-size: 2rem;
         }
 
-        /* Input sạch sẽ */
         .form-control { 
             background-color: #f8fafc; 
             border: 1px solid #e2e8f0; 
@@ -65,7 +63,6 @@
             border-bottom-left-radius: 8px;
         }
         
-        /* Fix border input khi dùng group */
         .input-group .form-control { border-left: none; }
 
         .btn-admin { 
@@ -142,7 +139,6 @@
 </div>
 
 <script>
-/* Script giữ nguyên logic của bạn */
 document.getElementById('adminLoginForm').addEventListener('submit', async function(e) {
     e.preventDefault();
     const btn = document.getElementById('submitBtn');

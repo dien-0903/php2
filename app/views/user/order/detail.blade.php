@@ -1,18 +1,14 @@
 @php
     if (session_status() === PHP_SESSION_NONE) session_start();
     
-    // 1. TÍNH TOÁN LẠI TỔNG TIỀN HÀNG GỐC (Chưa giảm) từ danh sách sản phẩm
     $actualSubtotal = 0;
     foreach($items as $item) {
         $actualSubtotal += $item['price'] * $item['quantity'];
     }
     
-    // 2. TÍNH SỐ TIỀN ĐÃ ĐƯỢC GIẢM (Tiền hàng gốc - Tiền thực tế đã thanh toán)
-    // Nếu kết quả > 0 tức là đơn hàng có dùng MGG
     $orderDiscount = $actualSubtotal - $order['total_amount'];
     if($orderDiscount < 0) $orderDiscount = 0;
 
-    // 3. Cấu hình các bước trạng thái (Timeline)
     $statusSteps = [
         0 => ['label' => 'Đã đặt hàng', 'icon' => 'bi-cart-check'],
         1 => ['label' => 'Đã xác nhận', 'icon' => 'bi-clipboard-check'],
@@ -25,7 +21,6 @@
 @include('user.layouts.header')
 
 <div class="container py-5 text-dark mb-5 animate-fade-in text-start">
-    <!-- Header Điều hướng -->
     <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-5 gap-3">
         <div>
             <nav aria-label="breadcrumb" class="mb-2">
@@ -50,7 +45,6 @@
         </div>
     </div>
 
-    <!-- Thanh trạng thái đơn hàng (Timeline Tracker) -->
     @if($currentStatus != 4)
     <div class="card border-0 shadow-sm rounded-5 bg-white mb-5 overflow-hidden border border-slate-100">
         <div class="card-body p-4 p-md-5">
@@ -66,7 +60,6 @@
                         @endif
                     </div>
                 @endforeach
-                <!-- Đường kẻ nối -->
                 <div class="tracker-line position-absolute top-50 start-0 translate-middle-y w-100 bg-light" style="height: 6px; z-index: 0; margin-top: -15px; border-radius: 10px;">
                     <div class="line-progress h-100 bg-primary transition-all shadow-sm" style="width: {{ ($currentStatus / 3) * 100 }}%; border-radius: 10px;"></div>
                 </div>
@@ -86,7 +79,6 @@
     @endif
 
     <div class="row g-4">
-        <!-- Cột trái: Sản phẩm & Ghi chú -->
         <div class="col-lg-8">
             <div class="card border-0 shadow-sm rounded-4 overflow-hidden mb-4 bg-white border border-slate-100">
                 <div class="card-header bg-white border-bottom py-3 px-4 d-flex justify-content-between align-items-center">
@@ -129,7 +121,6 @@
                     </table>
                 </div>
                 
-                <!-- Tổng kết tài chính (SỬA LỖI GIÁ TIỀN TẠI ĐÂY) -->
                 <div class="card-footer bg-slate-50 p-4 border-0">
                     <div class="row justify-content-end">
                         <div class="col-md-7 col-lg-7">
@@ -138,7 +129,6 @@
                                 <span class="fw-bold text-dark">{{ number_format($actualSubtotal) }}đ</span>
                             </div>
                             
-                            {{-- LOGIC: CHỈ HIỆN KHI CÓ GIẢM GIÁ THẬT SỰ --}}
                             @if($orderDiscount > 0)
                             <div class="d-flex justify-content-between mb-2 text-success animate-bounce-in">
                                 <span class="fw-bold small uppercase"><i class="bi bi-ticket-perforated-fill me-1"></i> Ưu đãi Voucher MD:</span>
@@ -170,7 +160,6 @@
                 </div>
             </div>
 
-            <!-- Ghi chú -->
             <div class="card border-0 shadow-sm rounded-4 bg-white border border-slate-100">
                 <div class="card-body p-4">
                     <h6 class="fw-black mb-3 uppercase text-muted small tracking-widest border-bottom pb-2">
@@ -183,9 +172,7 @@
             </div>
         </div>
 
-        <!-- Cột phải: Thông tin nhận hàng & Thao tác -->
         <div class="col-lg-4">
-            <!-- Thông tin vận chuyển -->
             <div class="card border-0 shadow-sm rounded-4 p-4 bg-white mb-4 border border-slate-100">
                 <h6 class="fw-black mb-4 uppercase text-muted small tracking-widest border-bottom pb-2">Thông tin nhận hàng</h6>
                 
@@ -225,9 +212,7 @@
                 </div>
             </div>
 
-            <!-- Thao tác nhanh -->
             <div class="card border-0 shadow-sm rounded-4 p-4 bg-dark text-white shadow-lg overflow-hidden position-relative">
-                <!-- Background Decor -->
                 <i class="bi bi-lightning-fill position-absolute text-white opacity-10" style="font-size: 8rem; right: -20px; bottom: -20px;"></i>
 
                 <h6 class="fw-black mb-4 uppercase text-white opacity-50 small tracking-widest border-bottom border-secondary pb-2">Hành động nhanh</h6>
@@ -259,40 +244,5 @@
     </div>
 </div>
 
-<style>
-    .fw-black { font-weight: 900; }
-    .extra-small { font-size: 11px; }
-    .uppercase { text-transform: uppercase; letter-spacing: 0.8px; }
-    .tracking-tighter { letter-spacing: -1.5px; }
-    .bg-slate-50 { background-color: #f8fafc; }
-    .shadow-inner { box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.05); }
-    .object-fit-contain { object-fit: contain; }
-    
-    /* Timeline Styles */
-    .order-tracker .tracker-step { width: 25%; }
-    .step-icon-wrapper { width: 54px; height: 54px; background: #fff; border: 4px solid #f1f5f9; color: #cbd5e1; transition: 0.4s; z-index: 2; }
-    .tracker-step.active .step-icon-wrapper { background: #2563eb; color: #fff; border-color: #e7f1ff; transform: scale(1.1); }
-    .tracker-step.active .step-label { color: #2563eb; }
-    
-    .hover-lift:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important; }
-    .transition-all { transition: all 0.3s ease; }
-    .animate-fade-in { animation: fadeIn 0.6s ease-out; }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-    @keyframes bounceIn { from { opacity: 0; transform: scale(0.9); } 50% { transform: scale(1.02); } to { opacity: 1; transform: scale(1); } }
-    .animate-bounce-in { animation: bounceIn 0.5s ease-out; }
-    
-    .bg-primary-subtle { background-color: #e7f1ff !important; }
-    .bg-warning-subtle { background-color: #fff9db !important; }
-    .bg-info-subtle { background-color: #e7f5ff !important; }
-
-    @media (max-width: 768px) {
-        .order-tracker .step-label { font-size: 9px; }
-        .order-tracker .tracker-step { width: auto; }
-        .tracker-line { display: none; }
-        .order-tracker { flex-direction: column; gap: 20px; align-items: flex-start; }
-        .tracker-step { display: flex; align-items: center; gap: 15px; }
-        .step-icon-wrapper { margin-bottom: 0 !important; }
-    }
-</style>
 
 @include('user.layouts.footer')

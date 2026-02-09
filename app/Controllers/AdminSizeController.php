@@ -7,7 +7,7 @@ class AdminSizeController extends AdminController {
         
         $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
         $search = $_GET['search'] ?? '';
-        $limit = 10;
+        $limit = 5;
 
         $result = $sizeModel->paginate('sizes', $page, $limit, $search, [], 'name');
 

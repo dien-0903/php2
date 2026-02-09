@@ -24,7 +24,6 @@
             <a href="{{ rtrim(BASE_URL, '/') }}/product/index" class="btn btn-primary rounded-pill mt-3">Thêm sản phẩm</a>
         </div>
     @else
-        <!-- Nếu chưa có hàm getByIds trong Model thì layout này sẽ rỗng data, cần bổ sung Model -->
         <div class="table-responsive bg-white rounded-5 shadow-sm p-4 border border-slate-50">
             @if(empty($products))
                 <div class="alert alert-warning text-center">Vui lòng cập nhật Model (getByIds) để hiển thị dữ liệu chi tiết. ID đang so sánh: {{ implode(', ', $_SESSION['compare']) }}</div>

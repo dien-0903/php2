@@ -25,7 +25,6 @@
         </button>
     </div>
 
-    <!-- Thanh tìm kiếm -->
     <div class="card p-3 mb-4 shadow-sm border-0 rounded-4 bg-white border border-slate-100">
         <form action="{{ rtrim(BASE_URL, '/') }}/adminuser/index" method="GET" class="row g-2">
             <div class="col-md-5">
@@ -48,7 +47,6 @@
         </form>
     </div>
 
-    <!-- Bảng danh sách -->
     <div class="card shadow-sm border-0 rounded-4 overflow-hidden bg-white border border-slate-50">
         <div class="table-responsive">
             <table class="table table-hover align-middle mb-0">
@@ -85,7 +83,6 @@
                         </td>
                         <td class="text-end pe-4">
                             <div class="btn-group shadow-sm rounded-3 overflow-hidden">
-                                <!-- Nút Sửa -->
                                 <button class="btn btn-sm btn-white border btn-edit-user"
                                     data-bs-toggle="modal" data-bs-target="#editUserModal"
                                     data-id="{{ $u['id'] }}"
@@ -96,7 +93,6 @@
                                     <i class="bi bi-pencil-square text-warning"></i>
                                 </button>
                                 
-                                <!-- Nút Đổi Pass -->
                                 <button class="btn btn-sm btn-white border btn-pass-user"
                                     data-bs-toggle="modal" data-bs-target="#passwordUserModal"
                                     data-id="{{ $u['id'] }}"
@@ -105,13 +101,11 @@
                                     <i class="bi bi-key text-info"></i>
                                 </button>
 
-                                <!-- Nút Địa chỉ -->
                                 <a href="{{ rtrim(BASE_URL, '/') }}/adminaddress/index/{{ $u['id'] }}" 
                                    class="btn btn-sm btn-white border" title="Quản lý địa chỉ">
                                     <i class="bi bi-geo-alt text-success"></i>
                                 </a>
 
-                                <!-- Nút Xóa -->
                                 <a href="{{ rtrim(BASE_URL, '/') }}/adminuser/destroy/{{ $u['id'] }}"
                                    class="btn btn-sm btn-white border"
                                    onclick="return confirm('Bạn có chắc chắn muốn xóa thành viên {{ $u['fullname'] }}?')"
@@ -131,7 +125,6 @@
         </div>
     </div>
 
-    <!-- Phân trang -->
     @if (isset($totalPages) && $totalPages > 1)
     <nav class="mt-4 mb-5">
         <ul class="pagination justify-content-center gap-2">
@@ -146,7 +139,6 @@
     @endif
 </div>
 
-<!-- Modal Đổi Mật Khẩu (Dùng chung, JS sẽ xử lý action) -->
 <div class="modal fade" id="passwordUserModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content border-0 shadow-lg rounded-4">
@@ -179,13 +171,11 @@
     </div>
 </div>
 
-<!-- Include Modal Thêm và Sửa -->
 @include('admin.user.them')
 @include('admin.user.edit')
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Xử lý Modal Sửa
         const editButtons = document.querySelectorAll('.btn-edit-user');
         const editForm = document.getElementById('editUserForm');
 
@@ -201,7 +191,6 @@
             });
         });
 
-        // Xử lý Modal Đổi Mật Khẩu
         const passButtons = document.querySelectorAll('.btn-pass-user');
         const passForm = document.getElementById('passwordUserForm');
         const nameDisplay = document.getElementById('pass_fullname_display');
@@ -218,7 +207,6 @@
             });
         });
 
-        // Hiển thị lại Modal nếu có lỗi validate server trả về
         @if(isset($_SESSION['error_type']))
             const modalId = "{{ $_SESSION['error_type'] === 'add' ? '#addUserModal' : '#editUserModal' }}";
             const targetModal = document.querySelector(modalId);

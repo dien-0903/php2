@@ -3,27 +3,21 @@
         session_start();
     }
 
-    // --- CẤU HÌNH ĐƯỜNG DẪN CHUẨN (ĐỒNG BỘ VỚI TRANG CHI TIẾT) ---
     $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
     $host = $_SERVER['HTTP_HOST'];
     
-    // 1. LINK_URL (Động): Dùng cho các liên kết chức năng (Xóa, Xem, Home) để giữ Session
     $scriptDir = str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME']));
     $path = str_replace('/public', '', $scriptDir);
     $path = rtrim($path, '/');
     $LINK_URL = $protocol . $host . $path;
-
-    // 2. IMG_URL (Cứng): Dùng cho ảnh để đảm bảo hiển thị đúng trên máy bạn
     $IMG_URL = 'http://localhost/PHP2';
 @endphp
 
 @include('user.layouts.header')
 
-<!-- GIAO DIỆN SẠCH (CLEAN DESIGN) -->
 <div class="wishlist-wrapper bg-light min-vh-100 font-inter text-dark py-5">
     <div class="container">
         
-        <!-- Header Section -->
         <div class="text-center mb-5">
             <h1 class="display-6 fw-black text-uppercase tracking-tight mb-2 text-dark">
                 Sản phẩm yêu thích
@@ -38,7 +32,6 @@
             </div>
         </div>
 
-        <!-- Alert Success -->
         @if(isset($_SESSION['success']))
             <div class="alert alert-success border-0 shadow-sm rounded-4 mb-5 d-flex align-items-center justify-content-center gap-2 animate-bounce-in bg-white text-success fw-bold">
                 <i class="bi bi-check-circle-fill"></i>
@@ -47,9 +40,7 @@
             </div>
         @endif
 
-        <!-- Content -->
         @if(empty($wishlist_ids))
-            <!-- Empty State -->
             <div class="text-center py-5">
                 <div class="mb-4">
                     <div class="d-inline-flex align-items-center justify-content-center bg-white rounded-circle shadow-sm p-4" style="width: 100px; height: 100px;">
@@ -65,7 +56,6 @@
         @else
             
             @if(empty($products))
-                <!-- Fallback: Nếu controller chưa trả về biến $products -->
                 <div class="alert alert-warning rounded-4 border-0 shadow-sm text-center">
                     <i class="bi bi-info-circle me-2"></i> Đang hiển thị danh sách ID (Cần cập nhật Controller để load chi tiết sản phẩm).
                 </div>
@@ -83,13 +73,11 @@
                     @endforeach
                 </div>
             @else
-                <!-- Grid Products (Giao diện chính) -->
                 <div class="row g-4">
                     @foreach($products as $item)
                         <div class="col-6 col-md-3">
                             <div class="card border-0 shadow-sm h-100 rounded-4 overflow-hidden product-card hover-shadow-lg transition-all group bg-white position-relative">
                                 
-                                <!-- Remove Button (Floating top-right) -->
                                 <a href="{{ $LINK_URL }}/wishlist/remove/{{ $item['id'] }}" 
                                    class="position-absolute top-0 end-0 m-3 btn btn-white rounded-circle shadow-sm d-flex align-items-center justify-content-center text-danger hover-scale z-2"
                                    style="width: 35px; height: 35px; background: rgba(255,255,255,0.9);"
@@ -97,12 +85,10 @@
                                     <i class="bi bi-trash"></i>
                                 </a>
 
-                                <!-- Image Container -->
                                 <a href="{{ $LINK_URL }}/product/show/{{ $item['id'] }}" class="text-decoration-none d-block overflow-hidden bg-light">
                                     <div class="ratio ratio-1x1">
                                         <div class="d-flex align-items-center justify-content-center p-4">
                                             @php
-                                                // Dùng IMG_URL cứng cho ảnh
                                                 $imgName = $item['image'] ?: 'default.jpg';
                                                 $imgPath = $IMG_URL . '/public/uploads/products/' . $imgName;
                                             @endphp
@@ -114,7 +100,6 @@
                                     </div>
                                 </a>
 
-                                <!-- Body -->
                                 <div class="card-body text-center d-flex flex-column p-3">
                                     <div class="mb-auto">
                                         <h6 class="card-title fw-bold text-dark text-truncate mb-1" style="font-size: 0.95rem;">
@@ -125,7 +110,6 @@
                                         <p class="text-danger fw-black mb-3">{{ number_format($item['price'], 0, ',', '.') }}đ</p>
                                     </div>
                                     
-                                    <!-- Add to Cart (Relative z-index để nằm trên stretched-link) -->
                                     <div class="d-grid position-relative z-1">
                                         @if(isset($item['stock']) && $item['stock'] > 0)
                                             <a href="{{ $LINK_URL }}/cart/add/{{ $item['id'] }}" class="btn btn-primary rounded-pill fw-bold btn-sm py-2">
@@ -147,27 +131,5 @@
         @endif
     </div>
 </div>
-
-<style>
-    .font-inter { font-family: 'Inter', sans-serif; }
-    .fw-black { font-weight: 900; }
-    
-    /* Hover Effects */
-    .hover-up:hover { transform: translateY(-3px); }
-    .hover-scale:hover { transform: scale(1.15); background-color: #fee2e2 !important; }
-    .hover-bg-danger:hover { background-color: #dc3545; color: white !important; }
-    
-    .hover-shadow-lg:hover { 
-        box-shadow: 0 15px 30px rgba(0,0,0,0.08) !important; 
-        transform: translateY(-5px); 
-    }
-    
-    .transition-all { transition: all 0.3s ease; }
-    .group:hover .group-hover\:scale-110 { transform: scale(1.1); }
-    
-    /* Animation */
-    .animate-bounce-in { animation: bounceIn 0.5s ease-out; }
-    @keyframes bounceIn { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
-</style>
 
 @include('user.layouts.footer')

@@ -7,7 +7,7 @@ class AdminColorController extends AdminController {
         
         $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
         $search = $_GET['search'] ?? '';
-        $limit = 10;
+        $limit = 5;
 
         $result = $colorModel->paginate('colors', $page, $limit, $search, [], 'name');
 

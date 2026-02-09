@@ -113,7 +113,6 @@ class AdminUserController extends AdminController {
         }
     }
 
-    // --- MỚI: CHỨC NĂNG ĐỔI MẬT KHẨU CHO USER ---
     public function updatePassword($id) {
         if (session_status() === PHP_SESSION_NONE) session_start();
         
@@ -132,8 +131,6 @@ class AdminUserController extends AdminController {
 
             if (strlen($newPassword) < 6) {
                 $_SESSION['error'] = "Mật khẩu phải có ít nhất 6 ký tự!";
-                // Lưu ý: Cần xử lý redirect lại trang edit password nếu có view riêng
-                // Hoặc flash session và quay lại trang index
                 session_write_close();
                 $this->redirect('adminuser/index'); 
                 return;
@@ -147,7 +144,6 @@ class AdminUserController extends AdminController {
             }
 
             try {
-                // Hàm updatePassword đã có sẵn trong Model User (được cung cấp ở context)
                 $userModel->updatePassword($user['email'], $newPassword);
                 $_SESSION['success'] = "Đã đổi mật khẩu cho user {$user['fullname']} thành công!";
             } catch (Exception $e) {
@@ -157,8 +153,6 @@ class AdminUserController extends AdminController {
             session_write_close();
             $this->redirect('adminuser/index');
         } else {
-            // Nếu là GET request -> Hiển thị form đổi pass (nếu bạn muốn làm trang riêng)
-            // Hiện tại tôi redirect về index để xử lý qua Modal hoặc Form chung
             $this->redirect('adminuser/index'); 
         }
     }
@@ -168,7 +162,6 @@ class AdminUserController extends AdminController {
         $user = $userModel->show($id);
 
         if ($user && ($user['role'] ?? '') === 'admin') {
-            // Ngăn chặn xóa chính mình nếu là admin đang đăng nhập
             if (isset($_SESSION['user']) && $_SESSION['user']['id'] == $id) {
                 $_SESSION['error'] = "Bạn không thể xóa tài khoản của chính mình!";
                 session_write_close();

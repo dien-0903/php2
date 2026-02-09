@@ -1,4 +1,3 @@
-<!-- Modal Thêm Địa Chỉ -->
 <div class="modal fade" id="addAddressModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <form action="{{ rtrim(BASE_URL, '/') }}/adminaddress/store" method="POST" id="addAddressForm" class="modal-content border-0 shadow-lg rounded-4">
@@ -14,7 +13,6 @@
                 </div>
                 <div class="mb-3">
                     <label class="form-label small fw-bold uppercase text-muted">Số điện thoại</label>
-                    <!-- FIX: Thêm value để hiện SĐT của user đang được quản lý -->
                     <input type="text" name="phone" class="form-control rounded-3 py-2" required value="{{ $user['phone'] ?? '' }}" placeholder="09xxxxxxxx">
                 </div>
                 <div class="row g-2 mb-3">

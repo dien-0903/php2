@@ -1,7 +1,6 @@
 @include('admin.layouts.header')
 
 <div class="container mt-4 text-dark mb-5 animate-fade-in">
-    <!-- Tiêu đề trang -->
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="fw-bold uppercase mb-0 tracking-tighter">
             <i class="bi bi-cart-check-fill text-primary me-2"></i>Quản lý đơn hàng
@@ -11,10 +10,8 @@
         </div>
     </div>
 
-    <!-- BỘ LỌC CHUẨN THEO THIẾT KẾ -->
     <div class="card p-4 mb-5 shadow-sm border-0 rounded-4 bg-white border border-slate-100">
         <form action="{{ rtrim(BASE_URL, '/') }}/adminorder/index" method="GET" class="row g-4 align-items-end">
-            <!-- Trạng thái -->
             <div class="col-md-3 text-start">
                 <label class="form-label extra-small fw-bold text-muted text-uppercase tracking-wider mb-2 ms-2">TRẠNG THÁI</label>
                 <div class="rounded-pill border px-2 bg-light shadow-inner">
@@ -29,7 +26,6 @@
                 </div>
             </div>
             
-            <!-- Tìm kiếm -->
             <div class="col-md-5 text-start">
                 <label class="form-label extra-small fw-bold text-muted text-uppercase tracking-wider mb-2 ms-2">TÌM KIẾM</label>
                 <div class="input-group rounded-pill border overflow-hidden bg-light shadow-inner">
@@ -41,7 +37,6 @@
                 </div>
             </div>
             
-            <!-- Nút bấm -->
             <div class="col-md-4">
                 <div class="d-flex gap-2">
                     <button type="submit" class="btn btn-dark w-100 rounded-pill fw-bold py-2.5 shadow-sm text-uppercase transition-all hover-lift">
@@ -55,7 +50,6 @@
         </form>
     </div>
 
-    <!-- Bảng Đơn hàng -->
     <div class="card shadow-sm border-0 rounded-4 overflow-hidden bg-white border border-slate-100">
         <div class="table-responsive">
             <table class="table table-hover align-middle mb-0">
@@ -89,7 +83,6 @@
                             <span class="fw-black text-danger">{{ number_format($o['total_amount']) }}đ</span>
                         </td>
                         <td class="text-center">
-                            <!-- FIX: Sử dụng AJAX thay vì form submit truyền thống để tránh nhảy trang -->
                             <div class="position-relative d-inline-block w-100">
                                 <select class="form-select form-select-sm rounded-pill border-0 shadow-sm fw-bold status-ajax-select
                                     {{ $o['status'] == 0 ? 'bg-warning-subtle text-warning' : '' }}
@@ -130,7 +123,6 @@
         </div>
     </div>
 
-    <!-- KHỐI PHÂN TRANG -->
     <nav class="mt-5 mb-5">
         <ul class="pagination justify-content-center gap-2">
             @if (isset($totalPages) && $totalPages > 1)
@@ -157,7 +149,6 @@
                     </a>
                 </li>
             @else
-                <!-- Luôn hiển thị nút trang 1 để giao diện không bị trống nếu bạn muốn nút luôn xuất hiện -->
                 <li class="page-item active">
                     <span class="page-link rounded-3 border-0 shadow-sm px-3 py-2 fw-bold bg-primary text-white shadow-primary">1</span>
                 </li>
@@ -166,14 +157,12 @@
     </nav>
 </div>
 
-<!-- SCRIPT CẬP NHẬT AJAX -->
 <script>
 async function updateStatusAjax(selectElement) {
     const orderId = selectElement.dataset.orderId;
     const newStatus = selectElement.value;
     const loader = document.getElementById(`loader-${orderId}`);
     
-    // Hiện loader và vô hiệu hóa select tạm thời
     loader.classList.remove('d-none');
     selectElement.disabled = true;
 
@@ -187,7 +176,6 @@ async function updateStatusAjax(selectElement) {
             body: formData
         });
 
-        // Đổi màu nền select tương ứng với trạng thái mới
         selectElement.className = 'form-select form-select-sm rounded-pill border-0 shadow-sm fw-bold status-ajax-select';
         if (newStatus == 0) selectElement.classList.add('bg-warning-subtle', 'text-warning');
         if (newStatus == 1) selectElement.classList.add('bg-info-subtle', 'text-info');
@@ -195,14 +183,12 @@ async function updateStatusAjax(selectElement) {
         if (newStatus == 3) selectElement.classList.add('bg-success-subtle', 'text-success');
         if (newStatus == 4) selectElement.classList.add('bg-danger-subtle', 'text-danger');
 
-        // Thông báo thành công nhẹ nhàng (không cần alert gây phiền)
         console.log(`Đã cập nhật đơn #MD-${orderId}`);
         
     } catch (error) {
         console.error('Lỗi cập nhật:', error);
         alert('Có lỗi xảy ra khi cập nhật trạng thái!');
     } finally {
-        // Ẩn loader và kích hoạt lại select
         loader.classList.add('d-none');
         selectElement.disabled = false;
     }

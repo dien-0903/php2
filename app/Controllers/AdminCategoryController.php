@@ -38,8 +38,6 @@ class AdminCategoryController extends AdminController {
 
             $imageName = 'default.jpg';
             if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
-                // SỬ DỤNG HÀM TỪ ADMIN CONTROLLER (Class Cha)
-                // Tham số 'categories' để lưu vào thư mục public/uploads/categories/
                 $uploaded = $this->uploadFile($_FILES['image'], 'categories');
                 if ($uploaded) {
                     $imageName = $uploaded;
@@ -90,7 +88,6 @@ class AdminCategoryController extends AdminController {
 
             $imageName = $current['image'];
             if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
-                // SỬ DỤNG HÀM TỪ ADMIN CONTROLLER
                 $uploaded = $this->uploadFile($_FILES['image'], 'categories');
                 if ($uploaded) {
                     $imageName = $uploaded;
@@ -126,6 +123,4 @@ class AdminCategoryController extends AdminController {
         session_write_close();
         $this->redirect('admincategory/index');
     }
-
-    // ĐÃ XÓA hàm uploadFile() private tại đây
 }

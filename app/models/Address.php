@@ -3,6 +3,26 @@
 class Address extends Model {
     protected $table = 'addresses';
 
+    public function paginateByUser($userId, $page = 1, $limit = 5) {
+        $offset = ($page - 1) * $limit;
+        $params = [$userId];
+        $where = "WHERE user_id = ? AND deleted_at IS NULL";
+
+        $totalSql = "SELECT COUNT(*) as total FROM {$this->table} $where";
+        $totalCount = $this->query($totalSql, $params)->fetch()['total'];
+        $totalPages = ceil($totalCount / $limit);
+
+        $dataSql = "SELECT * FROM {$this->table} $where 
+                    ORDER BY is_default DESC, id DESC 
+                    LIMIT $limit OFFSET $offset";
+        $data = $this->query($dataSql, $params)->fetchAll();
+
+        return [
+            'data' => $data,
+            'totalPages' => $totalPages,
+            'totalCount' => $totalCount
+        ];
+    }
     public function getByUser($userId) {
         $sql = "SELECT * FROM {$this->table} WHERE user_id = ? AND deleted_at IS NULL ORDER BY is_default DESC, id DESC";
         return $this->query($sql, [$userId])->fetchAll();
@@ -12,22 +32,26 @@ class Address extends Model {
         if (!empty($data['is_default'])) {
             $this->resetDefault($data['user_id']);
         }
-        $sql = "INSERT INTO {$this->table} (user_id, recipient_name, phone, address, is_default, status, created_at) 
-                VALUES (:user_id, :recipient_name, :phone, :address, :is_default, :status, NOW())";
+
+        $sql = "INSERT INTO {$this->table} (user_id, recipient_name, phone, address, is_default, created_at) 
+                VALUES (:user_id, :recipient_name, :phone, :address, :is_default, NOW())";
+        
         return $this->query($sql, [
             'user_id'        => $data['user_id'],
             'recipient_name' => $data['recipient_name'],
             'phone'          => $data['phone'],
             'address'        => $data['address'],
-            'is_default'     => !empty($data['is_default']) ? 1 : 0,
-            'status'         => $data['status'] ?? 1
+            'is_default'     => !empty($data['is_default']) ? 1 : 0
         ]);
     }
 
     public function update($id, $data) {
         $current = $this->query("SELECT user_id FROM {$this->table} WHERE id = ?", [$id])->fetch();
         if (!$current) return false;
-        if (!empty($data['is_default'])) $this->resetDefault($current['user_id']);
+
+        if (!empty($data['is_default'])) {
+            $this->resetDefault($current['user_id']);
+        }
 
         $sql = "UPDATE {$this->table} SET 
                 recipient_name = :recipient_name,
@@ -36,6 +60,7 @@ class Address extends Model {
                 is_default = :is_default,
                 updated_at = NOW()
                 WHERE id = :id";
+        
         return $this->query($sql, [
             'id'             => $id,
             'recipient_name' => $data['recipient_name'],
@@ -45,21 +70,17 @@ class Address extends Model {
         ]);
     }
 
-    /**
-     * FIX: Thêm hàm thay đổi trạng thái hoạt động
-     */
-    public function toggleStatus($id) {
-        $sql = "UPDATE {$this->table} SET status = 1 - status WHERE id = ?";
-        return $this->query($sql, [$id]);
+    public function setDefault($id, $userId) {
+        $this->resetDefault($userId);
+        return $this->query("UPDATE {$this->table} SET is_default = 1 WHERE id = ?", [$id]);
     }
-
     public function delete($id) {
         return $this->query("UPDATE {$this->table} SET deleted_at = NOW() WHERE id = ?", [$id]);
     }
 
-    public function setDefault($id, $userId) {
-        $this->resetDefault($userId);
-        return $this->query("UPDATE {$this->table} SET is_default = 1 WHERE id = ?", [$id]);
+    public function toggleStatus($id) {
+        $sql = "UPDATE {$this->table} SET status = 1 - status WHERE id = ?";
+        return $this->query($sql, [$id]);
     }
 
     private function resetDefault($userId) {
